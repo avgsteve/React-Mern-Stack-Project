@@ -1,3 +1,5 @@
+/*jshint esversion: 6 */
+/*jshint esversion: 8 */
 const mongoose = require('mongoose');
 
 const UserSchema = new mongoose.Schema({
@@ -14,7 +16,7 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  avatar: {
+  avatar: { //user's profile image
     type: String
   },
   date: {

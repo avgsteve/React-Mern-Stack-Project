@@ -1,20 +1,25 @@
+/*jshint esversion: 6 */
+/*jshint esversion: 8 */
 const express = require('express');
-const connectDB = require('./config/db');
+// const connectDB = require('./config/db');
 const path = require('path');
 
 const app = express();
 
 // Connect Database
-connectDB();
+// connectDB();
 
 // Init Middleware
-app.use(express.json());
+app.use(express.json()); // for parsing incoming requests with JSON payloads
+//No need to use app.use(express.json( { extended: false } ));
+//ref:  https://stackoverflow.com/questions/57762864/meaning-of-argument-in-express-json-extended-false
 
+app.get('/', (req, res) => res.send("API running!"));
 // Define Routes
-app.use('/api/users', require('./routes/api/users'));
-app.use('/api/auth', require('./routes/api/auth'));
-app.use('/api/profile', require('./routes/api/profile'));
-app.use('/api/posts', require('./routes/api/posts'));
+// app.use('/api/users', require('./routes/api/users'));
+// app.use('/api/auth', require('./routes/api/auth'));
+// app.use('/api/profile', require('./routes/api/profile'));
+// app.use('/api/posts', require('./routes/api/posts'));
 
 // Serve static assets in production
 if (process.env.NODE_ENV === 'production') {
