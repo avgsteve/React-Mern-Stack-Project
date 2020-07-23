@@ -10,7 +10,7 @@ const config = require('config');
 const {
   check,
   validationResult
-} = require('express-validator');
+} = require('express-validator'); // to validate incoming POST req from body
 const normalize = require('normalize-url');
 
 const User = require('../../models/User');
