@@ -1,11 +1,17 @@
+/*jshint esversion: 6 */
+/*jshint esversion: 8 */
 const express = require('express');
 const axios = require('axios');
 const config = require('config');
 const router = express.Router();
-const auth = require('../../middleware/auth');
-const { check, validationResult } = require('express-validator');
+const auth_tokenVerifier = require('../../middleware/auth_tokenVerifier');
+const {
+  check,
+  validationResult
+} = require('express-validator');
 // bring in normalize to give us a proper url, regardless of what user entered
 const normalize = require('normalize-url');
+
 const checkObjectId = require('../../middleware/checkObjectId');
 
 const Profile = require('../../models/Profile');
@@ -15,22 +21,33 @@ const Post = require('../../models/Post');
 // @route    GET api/profile/me
 // @desc     Get current users profile
 // @access   Private
-router.get('/me', auth, async (req, res) => {
-  try {
-    const profile = await Profile.findOne({
-      user: req.user.id
-    }).populate('user', ['name', 'avatar']);
 
-    if (!profile) {
-      return res.status(400).json({ msg: 'There is no profile for this user' });
+router.get('/me',
+  auth_tokenVerifier,
+  async (req, res) => {
+
+    try {
+
+      const profile = await Profile.findOne({
+          user: req.user.id
+        })
+        .populate('user', ['name', 'avatar']); // use the ObjectId in "user" field of current Profile document to find and display another document's 'name' and 'avatar' field data
+
+      if (!profile) {
+        return res.status(400).json({
+          msg: 'There is no profile for this user'
+        });
+      }
+
+      res.json(profile);
+
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server Error');
     }
 
-    res.json(profile);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server Error');
-  }
-});
+  });
+
 
 // @route    POST api/profile
 // @desc     Create or update user profile
@@ -38,7 +55,7 @@ router.get('/me', auth, async (req, res) => {
 router.post(
   '/',
   [
-    auth,
+    auth_tokenVerifier,
     [
       check('status', 'Status is required').not().isEmpty(),
       check('skills', 'Skills is required').not().isEmpty()
@@ -47,7 +64,9 @@ router.post(
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      return res.status(400).json({
+        errors: errors.array()
+      });
     }
     const {
       company,
@@ -68,31 +87,43 @@ router.post(
       user: req.user.id,
       company,
       location,
-      website: website && website !== '' ? normalize(website, { forceHttps: true }) : '',
+      website: website && website !== '' ? normalize(website, {
+        forceHttps: true
+      }) : '',
       bio,
-      skills: Array.isArray(skills)
-        ? skills
-        : skills.split(',').map((skill) => ' ' + skill.trim()),
+      skills: Array.isArray(skills) ?
+        skills : skills.split(',').map((skill) => ' ' + skill.trim()),
       status,
       githubusername
     };
 
     // Build social object and add to profileFields
-    const socialfields = { youtube, twitter, instagram, linkedin, facebook };
+    const socialfields = {
+      youtube,
+      twitter,
+      instagram,
+      linkedin,
+      facebook
+    };
 
     for (const [key, value] of Object.entries(socialfields)) {
       if (value && value.length > 0)
-        socialfields[key] = normalize(value, { forceHttps: true });
+        socialfields[key] = normalize(value, {
+          forceHttps: true
+        });
     }
     profileFields.social = socialfields;
 
     try {
       // Using upsert option (creates new doc if no match is found):
-      let profile = await Profile.findOneAndUpdate(
-        { user: req.user.id },
-        { $set: profileFields },
-        { new: true, upsert: true }
-      );
+      let profile = await Profile.findOneAndUpdate({
+        user: req.user.id
+      }, {
+        $set: profileFields
+      }, {
+        new: true,
+        upsert: true
+      });
       res.json(profile);
     } catch (err) {
       console.error(err.message);
@@ -120,18 +151,26 @@ router.get('/', async (req, res) => {
 router.get(
   '/user/:user_id',
   checkObjectId('user_id'),
-  async ({ params: { user_id } }, res) => {
+  async ({
+    params: {
+      user_id
+    }
+  }, res) => {
     try {
       const profile = await Profile.findOne({
         user: user_id
       }).populate('user', ['name', 'avatar']);
 
-      if (!profile) return res.status(400).json({ msg: 'Profile not found' });
+      if (!profile) return res.status(400).json({
+        msg: 'Profile not found'
+      });
 
       return res.json(profile);
     } catch (err) {
       console.error(err.message);
-      return res.status(500).json({ msg: 'Server error' });
+      return res.status(500).json({
+        msg: 'Server error'
+      });
     }
   }
 );
@@ -139,16 +178,24 @@ router.get(
 // @route    DELETE api/profile
 // @desc     Delete profile, user & posts
 // @access   Private
-router.delete('/', auth, async (req, res) => {
+router.delete('/', auth_tokenVerifier, async (req, res) => {
   try {
     // Remove user posts
-    await Post.deleteMany({ user: req.user.id });
+    await Post.deleteMany({
+      user: req.user.id
+    });
     // Remove profile
-    await Profile.findOneAndRemove({ user: req.user.id });
+    await Profile.findOneAndRemove({
+      user: req.user.id
+    });
     // Remove user
-    await User.findOneAndRemove({ _id: req.user.id });
+    await User.findOneAndRemove({
+      _id: req.user.id
+    });
 
-    res.json({ msg: 'User deleted' });
+    res.json({
+      msg: 'User deleted'
+    });
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server Error');
@@ -161,20 +208,24 @@ router.delete('/', auth, async (req, res) => {
 router.put(
   '/experience',
   [
-    auth,
+    auth_tokenVerifier,
     [
       check('title', 'Title is required').not().isEmpty(),
       check('company', 'Company is required').not().isEmpty(),
       check('from', 'From date is required and needs to be from the past')
-        .not()
-        .isEmpty()
-        .custom((value, { req }) => (req.body.to ? value < req.body.to : true))
+      .not()
+      .isEmpty()
+      .custom((value, {
+        req
+      }) => (req.body.to ? value < req.body.to : true))
     ]
   ],
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      return res.status(400).json({
+        errors: errors.array()
+      });
     }
 
     const {
@@ -198,7 +249,9 @@ router.put(
     };
 
     try {
-      const profile = await Profile.findOne({ user: req.user.id });
+      const profile = await Profile.findOne({
+        user: req.user.id
+      });
 
       profile.experience.unshift(newExp);
 
@@ -216,9 +269,11 @@ router.put(
 // @desc     Delete experience from profile
 // @access   Private
 
-router.delete('/experience/:exp_id', auth, async (req, res) => {
+router.delete('/experience/:exp_id', auth_tokenVerifier, async (req, res) => {
   try {
-    const foundProfile = await Profile.findOne({ user: req.user.id });
+    const foundProfile = await Profile.findOne({
+      user: req.user.id
+    });
 
     foundProfile.experience = foundProfile.experience.filter(
       (exp) => exp._id.toString() !== req.params.exp_id
@@ -228,7 +283,9 @@ router.delete('/experience/:exp_id', auth, async (req, res) => {
     return res.status(200).json(foundProfile);
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ msg: 'Server error' });
+    return res.status(500).json({
+      msg: 'Server error'
+    });
   }
 });
 
@@ -238,21 +295,25 @@ router.delete('/experience/:exp_id', auth, async (req, res) => {
 router.put(
   '/education',
   [
-    auth,
+    auth_tokenVerifier,
     [
       check('school', 'School is required').not().isEmpty(),
       check('degree', 'Degree is required').not().isEmpty(),
       check('fieldofstudy', 'Field of study is required').not().isEmpty(),
       check('from', 'From date is required and needs to be from the past')
-        .not()
-        .isEmpty()
-        .custom((value, { req }) => (req.body.to ? value < req.body.to : true))
+      .not()
+      .isEmpty()
+      .custom((value, {
+        req
+      }) => (req.body.to ? value < req.body.to : true))
     ]
   ],
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      return res.status(400).json({
+        errors: errors.array()
+      });
     }
 
     const {
@@ -276,7 +337,9 @@ router.put(
     };
 
     try {
-      const profile = await Profile.findOne({ user: req.user.id });
+      const profile = await Profile.findOne({
+        user: req.user.id
+      });
 
       profile.education.unshift(newEdu);
 
@@ -294,9 +357,11 @@ router.put(
 // @desc     Delete education from profile
 // @access   Private
 
-router.delete('/education/:edu_id', auth, async (req, res) => {
+router.delete('/education/:edu_id', auth_tokenVerifier, async (req, res) => {
   try {
-    const foundProfile = await Profile.findOne({ user: req.user.id });
+    const foundProfile = await Profile.findOne({
+      user: req.user.id
+    });
     foundProfile.education = foundProfile.education.filter(
       (edu) => edu._id.toString() !== req.params.edu_id
     );
@@ -304,7 +369,9 @@ router.delete('/education/:edu_id', auth, async (req, res) => {
     return res.status(200).json(foundProfile);
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ msg: 'Server error' });
+    return res.status(500).json({
+      msg: 'Server error'
+    });
   }
 });
 
@@ -321,11 +388,15 @@ router.get('/github/:username', async (req, res) => {
       Authorization: `token ${config.get('githubToken')}`
     };
 
-    const gitHubResponse = await axios.get(uri, { headers });
+    const gitHubResponse = await axios.get(uri, {
+      headers
+    });
     return res.json(gitHubResponse.data);
   } catch (err) {
     console.error(err.message);
-    return res.status(404).json({ msg: 'No Github profile found' });
+    return res.status(404).json({
+      msg: 'No Github profile found'
+    });
   }
 });
 

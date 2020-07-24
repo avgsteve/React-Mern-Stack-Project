@@ -1,7 +1,9 @@
+/*jshint esversion: 6 */
+/*jshint esversion: 8 */
 const mongoose = require('mongoose');
 
 const ProfileSchema = new mongoose.Schema({
-  user: {
+  user: { // this field will have user document's "name" and "avatat" field data by populating data in profileReutes.js as GET@api/profile/me
     type: mongoose.Schema.Types.ObjectId,
     ref: 'user'
   },
@@ -28,65 +30,61 @@ const ProfileSchema = new mongoose.Schema({
   githubusername: {
     type: String
   },
-  experience: [
-    {
-      title: {
-        type: String,
-        required: true
-      },
-      company: {
-        type: String,
-        required: true
-      },
-      location: {
-        type: String
-      },
-      from: {
-        type: Date,
-        required: true
-      },
-      to: {
-        type: Date
-      },
-      current: {
-        type: Boolean,
-        default: false
-      },
-      description: {
-        type: String
-      }
+  experience: [{
+    title: {
+      type: String,
+      required: true
+    },
+    company: {
+      type: String,
+      required: true
+    },
+    location: {
+      type: String
+    },
+    from: {
+      type: Date,
+      required: true
+    },
+    to: {
+      type: Date
+    },
+    current: {
+      type: Boolean,
+      default: false
+    },
+    description: {
+      type: String
     }
-  ],
-  education: [
-    {
-      school: {
-        type: String,
-        required: true
-      },
-      degree: {
-        type: String,
-        required: true
-      },
-      fieldofstudy: {
-        type: String,
-        required: true
-      },
-      from: {
-        type: Date,
-        required: true
-      },
-      to: {
-        type: Date
-      },
-      current: {
-        type: Boolean,
-        default: false
-      },
-      description: {
-        type: String
-      }
+  }],
+  education: [{
+    school: {
+      type: String,
+      required: true
+    },
+    degree: {
+      type: String,
+      required: true
+    },
+    fieldofstudy: {
+      type: String,
+      required: true
+    },
+    from: {
+      type: Date,
+      required: true
+    },
+    to: {
+      type: Date
+    },
+    current: {
+      type: Boolean,
+      default: false
+    },
+    description: {
+      type: String
     }
-  ],
+  }],
   social: {
     youtube: {
       type: String

@@ -19,8 +19,14 @@ app.get('/', (req, res) => res.send("API running!"));
 
 // Define Routes
 app.use('/api/users', require('./routes/api/users'));
-app.use('/api/auth', require('./routes/api/authRoutes')); //POST req for user login, GET req for getting user'd data from document
-// app.use('/api/profile', require('./routes/api/profile'));
+app.use('/api/auth', require('./routes/api/authRoutes'));
+// GET@/api/auth for user login,
+// POST@/api/auth for getting user'd data from document
+app.use('/api/profile', require('./routes/api/profileReutes'));
+// GET@/api/profile/me for user's profile
+
+
+
 // app.use('/api/posts', require('./routes/api/posts'));
 
 // // Serve static assets in production
