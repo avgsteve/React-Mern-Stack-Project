@@ -136,6 +136,7 @@ router.post(
           if (err) throw err; //use arrow function to log an error message in console
 
           res.json({ //send token via http response
+            message: `User data have been created. The Id is: ${user._id}`,
             token
           });
 

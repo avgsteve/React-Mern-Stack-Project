@@ -279,16 +279,29 @@ router.delete('/', auth_tokenVerifier, async (req, res) => {
       user: req.user.id
     });
     // Remove profile
-    await Profile.findOneAndRemove({
+    const deletedProfile = await Profile.findOneAndRemove({
       user: req.user.id
     });
     // Remove user
-    await User.findOneAndRemove({
+    const deletedUser = await User.findOneAndRemove({
       _id: req.user.id
     });
 
+    console.log('\n\n', deletedUser);
+    console.log('\n\n', deletedProfile);
+
+    var msgForResponse;
+
+    if (!deletedUser || !deletedProfile) {
+      msgForResponse = "can't find any related data or document for this id";
+    } else {
+      msgForResponse = "User deleted";
+
+    }
+
+
     res.json({
-      msg: 'User deleted'
+      msg: msgForResponse
     });
   } catch (err) {
     console.error(err.message);
