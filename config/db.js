@@ -18,8 +18,8 @@ const connectDB = async () => {
       useUnifiedTopology: true
     });
 
-    console.log('\n\nMongoDB Connected...\n\nThe detail of connection is:');
-    console.log(connectionInfo);
+    console.log('\n\nMongoDB Connected...');
+    console.log("\nThe detail of connection is:\n\n", connectionInfo.connections[0].db.s.namespace);
 
   } catch (err) {
 
