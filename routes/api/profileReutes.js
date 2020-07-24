@@ -196,7 +196,7 @@ router.get('/', async (req, res) => {
       // console.log('\n\n\nloop #' + i);
       // console.log(`current Obj:`, convertedDocument);
 
-      //reorder objects properties show user can see important fields first
+      //reorder objects properties show user can see important fields first ...
       obj_sortedProperty = Object.keys(convertedDocument).sort()
         .reduce((acc, key) => ({
           ...acc,
