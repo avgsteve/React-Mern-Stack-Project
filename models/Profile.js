@@ -21,7 +21,7 @@ const ProfileSchema = new mongoose.Schema({
     required: true
   },
   skills: {
-    type: [String],
+    type: [String], // will be Array of strings to store multiple skills input
     required: true
   },
   bio: {

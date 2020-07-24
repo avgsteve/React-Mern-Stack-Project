@@ -1,5 +1,6 @@
 /*jshint esversion: 6 */
 /*jshint esversion: 8 */
+/*jshint esversion: 9 */
 const express = require('express');
 const axios = require('axios');
 const config = require('config');
@@ -9,8 +10,8 @@ const {
   check,
   validationResult
 } = require('express-validator');
-// bring in normalize to give us a proper url, regardless of what user entered
-const normalize = require('normalize-url');
+// bring in normalize_url to give us a proper url, regardless of what user entered
+const normalize_url = require('normalize-url');
 
 const checkObjectId = require('../../middleware/checkObjectId');
 
@@ -29,7 +30,7 @@ router.get('/me',
     try {
 
       const profile = await Profile.findOne({
-          user: req.user.id
+          user: req.user.id // req.user.id is created in "auth_tokenVerifier"
         })
         .populate('user', ['name', 'avatar']); // use the ObjectId in "user" field of current Profile document to find and display another document's 'name' and 'avatar' field data
 
@@ -39,7 +40,10 @@ router.get('/me',
         });
       }
 
-      res.json(profile);
+      res.json({
+        message: `The profile document of the user '${profile.user.name}' has been found!`,
+        profile
+      });
 
     } catch (err) {
       console.error(err.message);
@@ -54,21 +58,28 @@ router.get('/me',
 // @access   Private
 router.post(
   '/',
+  // ===== 1) Verify input from req.body =====
   [
     auth_tokenVerifier,
-    [
+    [ // check status and skills are required fields
       check('status', 'Status is required').not().isEmpty(),
       check('skills', 'Skills is required').not().isEmpty()
     ]
   ],
-  async (req, res) => {
+
+  async (req, res) => { // async function used to save, process input data and create new document
+
+    //check if there's any error from express-validator
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({
         errors: errors.array()
       });
     }
-    const {
+
+    // ===== 2) Save input from req.body =====
+
+    const { // After validation check, save input data from req.body to corresponding variable names one by one
       company,
       location,
       website,
@@ -83,22 +94,28 @@ router.post(
       facebook
     } = req.body;
 
-    const profileFields = {
-      user: req.user.id,
-      company,
-      location,
-      website: website && website !== '' ? normalize(website, {
+
+    // ===== 3) Process input from req.body =====
+
+    const profileFields = { // create "profileFields" obj to be used to set up the value in new user's Schema fields
+      user: req.user.id, //use current req.user object passed-in from auth_tokenVerifier
+      company: company,
+      location: location,
+      website: website && website !== '' ? normalize_url(website, {
         forceHttps: true
-      }) : '',
-      bio,
-      skills: Array.isArray(skills) ?
-        skills : skills.split(',').map((skill) => ' ' + skill.trim()),
-      status,
-      githubusername
+      }) : '', // use normalize-url package to make sure input URL is in correct format // ref: https://www.npmjs.com/package/normalize-url#api
+      bio: bio,
+      skills: Array.isArray(skills) ? //check if The skills is an Array
+        skills // if yes, use it as it is now //
+        :
+        skills.split(',').map((skillItem) => ' ' + skillItem.trim()), // if it's not Array, then 1) split the input string by "," and 2) use .map() to return a new Array with results generated from 3) each trimmed and concatenated string(skillItem)
+      status: status,
+      githubusername: githubusername
     };
 
-    // Build social object and add to profileFields
+    // Build social fields object and add to profileFields
     const socialfields = {
+      // Each variable refers to the object assigned with the object has corresponding name in req.body
       youtube,
       twitter,
       instagram,
@@ -106,25 +123,47 @@ router.post(
       facebook
     };
 
+    // Loop through the keys (property names) in socialfields Obj ex: socialfields.youtube : https:// .... get process the value with normalize_url
     for (const [key, value] of Object.entries(socialfields)) {
-      if (value && value.length > 0)
-        socialfields[key] = normalize(value, {
+
+      if (value && value.length > 0) // if the value in current key is valid
+        socialfields[key] = normalize_url(value, {
           forceHttps: true
-        });
+        }); // then assign the processed value back to the original key
     }
-    profileFields.social = socialfields;
+
+    profileFields.social = socialfields; // assign the processed socialfields back the profileFields' .social property
+
+
+    // ===== 4) Create a new profile document with processed input =====
 
     try {
-      // Using upsert option (creates new doc if no match is found):
-      let profile = await Profile.findOneAndUpdate({
-        user: req.user.id
-      }, {
-        $set: profileFields
-      }, {
-        new: true,
-        upsert: true
-      });
-      res.json(profile);
+
+      // find the document by id and update its fields by using $set with the profileFields object processed above
+      let profile = await Profile.findOneAndUpdate( //
+
+        { //argument #1: find document by user field's id
+          user: req.user.id
+        }, //
+
+        { //argument #2: update user's document with profileFields object (will update the Schema field with corresponding name in the obj)
+          $set: profileFields
+        }, //
+
+        { //argument #3:
+          new: true, // flag the document as "new" document so it can trigger pre-middlewares
+          upsert: true // use upsert to create a complete new document via Profile schema
+        });
+
+      //then await Profile will return a Object which has newly created document data to variable "profile"
+
+      // ===== 5) Process input from req.body =====
+
+      res.json({
+        message: "The user's profile has been successfully created/updated!",
+        profile,
+      }); // send newly updated document (profile) as HTTP respoinse
+
     } catch (err) {
       console.error(err.message);
       res.status(500).send('Server Error');
@@ -132,15 +171,46 @@ router.post(
   }
 );
 
+
 // @route    GET api/profile
 // @desc     Get all profiles
 // @access   Public
+
 router.get('/', async (req, res) => {
+
   try {
     const profiles = await Profile.find().populate('user', ['name', 'avatar']);
-    res.json(profiles);
+    const documentsArray = [];
+    let obj_sortedProperty = {};
+
+    //Add new property __index_in_DocumentArray in document,
+    for (var i = 0; i < profiles.length; i++) {
+
+      //need to convert doucment to JavaScript's standard Object first
+      const convertedDocument = profiles[0].toObject();
+
+      convertedDocument.__index_in_DocumentArray = i; // Add index to new property
+
+      //reorder objects properties show user can see important fields first
+      obj_sortedProperty = Object.keys(convertedDocument).sort()
+        .reduce((acc, key) => ({
+          ...acc,
+          [key]: convertedDocument[key]
+        }), {});
+
+      documentsArray.push(obj_sortedProperty); //push modified obj to temp Array
+    }
+
+
+    res.json({
+
+      profile_document_counts: documentsArray.length,
+      profiles: documentsArray // the documents have been added with new property 'count' to show the index in documents Array
+
+    });
+
   } catch (err) {
-    console.error(err.message);
+    console.error("\nError: \n\n", err.message);
     res.status(500).send('Server Error');
   }
 });

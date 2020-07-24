@@ -37,7 +37,7 @@ router.get('/',
 
 
 // @route    POST api/auth
-// @desc     Authenticate user & get token
+// @desc     Authenticate user & get token (USER LOG IN)
 // @access   Public
 // from server.js --> app.use('/api/auth', require('./routes/api/authRoutes'));
 
@@ -111,7 +111,7 @@ router.post(
 
           if (err) throw err;
           res.json({
-            msg: "Log-in process is successful",
+            msg: `User '${user.name}' has successful logged-in`,
             token
           });
 

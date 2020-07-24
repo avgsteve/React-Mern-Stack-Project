@@ -14,7 +14,7 @@ const connectDB = async () => {
     const connectionInfo = await mongoose.connect(dbURI, {
       useNewUrlParser: true,
       useCreateIndex: true,
-      useFindAndModify: false,
+      useFindAndModify: false, // use it to fix deprecated warning bug in mongoose
       useUnifiedTopology: true
     });
 
