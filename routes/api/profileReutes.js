@@ -183,13 +183,18 @@ router.get('/', async (req, res) => {
     const documentsArray = [];
     let obj_sortedProperty = {};
 
+    // console.log(profiles);
+
     //Add new property __index_in_DocumentArray in document,
     for (var i = 0; i < profiles.length; i++) {
 
       //need to convert doucment to JavaScript's standard Object first
-      const convertedDocument = profiles[0].toObject();
+      const convertedDocument = profiles[i].toObject();
 
       convertedDocument.__index_in_DocumentArray = i; // Add index to new property
+
+      // console.log('\n\n\nloop #' + i);
+      // console.log(`current Obj:`, convertedDocument);
 
       //reorder objects properties show user can see important fields first
       obj_sortedProperty = Object.keys(convertedDocument).sort()
@@ -197,6 +202,8 @@ router.get('/', async (req, res) => {
           ...acc,
           [key]: convertedDocument[key]
         }), {});
+
+
 
       documentsArray.push(obj_sortedProperty); //push modified obj to temp Array
     }
@@ -220,15 +227,23 @@ router.get('/', async (req, res) => {
 // @access   Public
 router.get(
   '/user/:user_id',
-  checkObjectId('user_id'),
-  async ({
-    params: {
-      user_id
-    }
-  }, res) => {
+  // checkObjectId('user_id'),
+
+  async (
+    //  { params: {
+    //     user_id
+    //   }
+    // },
+    req,
+    res) => {
+
     try {
+      console.log(`The params id is: ${req.params.user_id}\n\n`);
+
       const profile = await Profile.findOne({
-        user: user_id
+        // user: user_id
+        user: req.params.user_id,
+
       }).populate('user', ['name', 'avatar']);
 
       if (!profile) return res.status(400).json({
@@ -236,14 +251,23 @@ router.get(
       });
 
       return res.json(profile);
+
+
     } catch (err) {
+
       console.error(err.message);
+
+      if (err.kind == 'ObjectId') {
+        return res.status(400).json({
+          msg: 'Profile not found'
+        });
+      }
+
       return res.status(500).json({
         msg: 'Server error'
       });
     }
-  }
-);
+  });
 
 // @route    DELETE api/profile
 // @desc     Delete profile, user & posts

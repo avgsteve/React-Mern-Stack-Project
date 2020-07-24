@@ -112,6 +112,7 @@ router.post(
           if (err) throw err;
           res.json({
             msg: `User '${user.name}' has successful logged-in`,
+            user_id: user._id,
             token
           });
 
