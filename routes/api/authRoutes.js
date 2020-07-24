@@ -17,14 +17,16 @@ const User = require('../../models/User');
 // @desc     Get user by token
 // @access   Private
 
+// Route for getting user's data after the token is verified
 router.get('/',
-  auth_tokenVerifier,
-  (req, res) => res.send("Auth enabled"), // this middlware will be executed if only the auth_tokenVerifier is cleared for passing
-  // test the middleware "auth_tokenVerifier" with POSTMAN @ GET http://localhost:5000/api/auth
-  async (req, res) => {
+  auth_tokenVerifier, // verify user's (browser) http token  with JWT
+  // (req, res) => res.send("Auth enabled"), // this middlware will be executed if only the auth_tokenVerifier is cleared for passing
+  // // test the middleware "auth_tokenVerifier" with POSTMAN @ GET http://localhost:5000/api/auth
+
+  async (req, res) => { // send user's data after the token is successfully verified
     try {
       const user = await User.findById(req.user.id).select('-password');
-      res.json(user);
+      res.json(user); // send user's data as json format via HTTP response
     } catch (err) {
       console.error(err.message);
       res.status(500).send('Server Error');
