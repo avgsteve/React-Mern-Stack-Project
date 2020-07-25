@@ -272,36 +272,36 @@ router.get(
 // @route    DELETE api/profile
 // @desc     Delete profile, user & posts
 // @access   Private
+
 router.delete('/', auth_tokenVerifier, async (req, res) => {
+
   try {
-    // Remove user posts
-    await Post.deleteMany({
-      user: req.user.id
-    });
+    // // Remove user posts
+    // await Post.deleteMany({
+    //   user: req.user.id
+    // });
     // Remove profile
-    const deletedProfile = await Profile.findOneAndRemove({
-      user: req.user.id
+    const deleteResultOfProfile = await Profile.findOneAndRemove({
+      user: req.user.id //find Profile data in user's field
     });
     // Remove user
-    const deletedUser = await User.findOneAndRemove({
+    const deleteResultOfUser = await User.findOneAndRemove({
       _id: req.user.id
-    });
+    }).select('-password');
 
-    console.log('\n\n', deletedUser);
-    console.log('\n\n', deletedProfile);
+    console.log("\n\ndeleteResultOfProfile", deleteResultOfProfile);
+    console.log("\n\ndeleteResultOfUser", deleteResultOfUser);
 
-    var msgForResponse;
-
-    if (!deletedUser || !deletedProfile) {
-      msgForResponse = "can't find any related data or document for this id";
-    } else {
-      msgForResponse = "User deleted";
-
+    let deleteMessage;
+    if (!deleteResultOfUser && !deleteResultOfProfile) {
+      deleteMessage = 'User deleted';
     }
 
 
     res.json({
-      msg: msgForResponse
+      msg: deleteMessage,
+      deleteResultOf_Profile: deleteResultOfProfile,
+      deleteResultOf_User: deleteResultOfUser
     });
   } catch (err) {
     console.error(err.message);
@@ -355,16 +355,17 @@ router.put(
       description
     };
 
-    try {
+    try { // find the user's Profile
       const profile = await Profile.findOne({
         user: req.user.id
       });
 
-      profile.experience.unshift(newExp);
+      profile.experience.unshift(newExp); // insert new data
 
-      await profile.save();
+      await profile.save(); // save the document
 
       res.json(profile);
+
     } catch (err) {
       console.error(err.message);
       res.status(500).send('Server Error');
@@ -376,25 +377,27 @@ router.put(
 // @desc     Delete experience from profile
 // @access   Private
 
-router.delete('/experience/:exp_id', auth_tokenVerifier, async (req, res) => {
-  try {
-    const foundProfile = await Profile.findOne({
-      user: req.user.id
-    });
+router.delete('/experience/:exp_id', auth_tokenVerifier,
+  //
+  async (req, res) => {
+    try {
+      const foundProfile = await Profile.findOne({
+        user: req.user.id
+      });
 
-    foundProfile.experience = foundProfile.experience.filter(
-      (exp) => exp._id.toString() !== req.params.exp_id
-    );
+      foundProfile.experience = foundProfile.experience.filter(
+        (exp) => exp._id.toString() !== req.params.exp_id
+      );
 
-    await foundProfile.save();
-    return res.status(200).json(foundProfile);
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({
-      msg: 'Server error'
-    });
-  }
-});
+      await foundProfile.save();
+      return res.status(200).json(foundProfile);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        msg: 'Server error'
+      });
+    }
+  });
 
 // @route    PUT api/profile/education
 // @desc     Add profile education
