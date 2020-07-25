@@ -605,12 +605,12 @@ router.get('/github/:username', async (req, res) => {
     }).then(result => {
 
       console.log("\nThe result of GET request to GitHub:\n");
-      console.log(result.data);
+      console.log(result.data[0]);
       console.log("\n====================================\n");
 
       return res.json({
         msg: "GET request to GitHub successed!",
-        data: result.data
+        data: result.data[0]
       });
 
       // res.json(JSON.parse(body));
