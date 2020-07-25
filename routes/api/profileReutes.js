@@ -23,8 +23,7 @@ const Post = require('../../models/Post');
 // @desc     Get current users profile
 // @access   Private
 
-router.get('/me',
-  auth_tokenVerifier,
+router.get('/me', auth_tokenVerifier,
   async (req, res) => {
 
     try {
@@ -56,15 +55,12 @@ router.get('/me',
 // @route    POST api/profile
 // @desc     Create or update user profile
 // @access   Private
-router.post(
-  '/',
+router.post('/', auth_tokenVerifier,
   // ===== 1) Verify input from req.body =====
   [
-    auth_tokenVerifier,
-    [ // check status and skills are required fields
-      check('status', 'Status is required').not().isEmpty(),
-      check('skills', 'Skills is required').not().isEmpty()
-    ]
+    // check status and skills are required fields
+    check('status', 'Status is required').not().isEmpty(),
+    check('skills', 'Skills is required').not().isEmpty()
   ],
 
   async (req, res) => { // async function used to save, process input data and create new document
@@ -225,10 +221,8 @@ router.get('/', async (req, res) => {
 // @route    GET api/profile/user/:user_id
 // @desc     Get profile by user ID
 // @access   Public
-router.get(
-  '/user/:user_id',
+router.get('/user/:user_id',
   // checkObjectId('user_id'),
-
   async (
     //  { params: {
     //     user_id
@@ -310,7 +304,7 @@ router.delete('/', auth_tokenVerifier, async (req, res) => {
 });
 
 // @route    PUT api/profile/experience
-// @desc     Add profile experience
+// @desc     Add document to experience field (Array) inside user's profile
 // @access   Private
 router.put(
   '/experience',
@@ -322,19 +316,27 @@ router.put(
       check('from', 'From date is required and needs to be from the past')
       .not()
       .isEmpty()
-      .custom((value, {
-        req
-      }) => (req.body.to ? value < req.body.to : true))
+      .custom(
+        (value, { // add custom value
+            req
+          } //
+        ) => (req.body.to ? value < req.body.to : true))
     ]
   ],
+
   async (req, res) => {
+
+    // ===== 1) check if there's any error from input validation first
     const errors = validationResult(req);
+
     if (!errors.isEmpty()) {
       return res.status(400).json({
+        input_validation_error: "There's one or more error in the input fields",
         errors: errors.array()
       });
     }
 
+    // ===== 2) Assign input data to the variable respectively
     const {
       title,
       company,
@@ -355,23 +357,31 @@ router.put(
       description
     };
 
-    try { // find the user's Profile
+
+    // ===== 3) find the profile document to which the experience data (document) will be inserted
+    try {
       const profile = await Profile.findOne({
         user: req.user.id
       });
 
-      profile.experience.unshift(newExp); // insert new data
+      // ===== 4) insert new data to profile.experience (an Array for storing experience items)
+      profile.experience.unshift(newExp); // insert new data into experience Array
 
       await profile.save(); // save the document
 
-      res.json(profile);
+      res.json({
+        msg: "The new data for experience field has been successfully added!",
+        profile
+      });
 
     } catch (err) {
       console.error(err.message);
       res.status(500).send('Server Error');
     }
+
   }
 );
+
 
 // @route    DELETE api/profile/experience/:exp_id
 // @desc     Delete experience from profile
@@ -385,12 +395,50 @@ router.delete('/experience/:exp_id', auth_tokenVerifier,
         user: req.user.id
       });
 
+
+      console.log('The documents in experiece Array:\n');
+      console.log(foundProfile.experience);
+
+
+      // === for setting the message in HTTP response ===
+      var targetDocExists = false;
+      //  foundProfile.experience // Array
+      // var experienceDocumentId;
+
+      console.log("\n\nCurrent id of the targer document is:" + req.params.exp_id + "\n\n");
+
+      for (let experienceEntry of foundProfile.experience) {
+
+        // // for debugging
+        // console.log("\n\n\n The entries in experience field");
+        // console.log(experienceEntry);
+        // const entryId = experienceEntry._id;
+        // console.log(typeof(req.params.exp_id));
+
+
+        if (experienceEntry._id.toString() === req.params.exp_id) {
+          console.log('Found the id: ', experienceEntry._id);
+          targetDocExists = true;
+          break;
+        }
+      }
+
+      const responseMessage = targetDocExists === false ? `Can't find the document of experience item with the id: '${req.params.exp_id}'. Please make sure the id is correct` : `The experience of document id: ${req.params.exp_id} has been deleted and the profile is updated `;
+
+
+      // Remove experience document from Array foundProfile.experience (which is an Array containing mutiple experience document obj)
       foundProfile.experience = foundProfile.experience.filter(
-        (exp) => exp._id.toString() !== req.params.exp_id
+        (expEntry) => expEntry._id.toString() !== req.params.exp_id // filter the Profile results and keep only the documents those are not equal to the req.params.exp_id
       );
 
-      await foundProfile.save();
-      return res.status(200).json(foundProfile);
+
+      await foundProfile.save(); // save
+
+
+      return res.status(200).json({
+        msg: responseMessage,
+        foundProfile // send updated Array of experience documents
+      });
     } catch (error) {
       console.error(error);
       return res.status(500).json({
