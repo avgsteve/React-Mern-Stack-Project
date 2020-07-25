@@ -58,24 +58,36 @@ router.post('/', [auth_tokenVerifier,
 // @route    GET api/posts
 // @desc     Get all posts
 // @access   Private
-router.get('/', auth_tokenVerifier, async (req, res) => {
-  try {
-    const posts = await Post.find().sort({
-      date: -1
-    });
-    res.json(posts);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server Error');
-  }
-});
+router.get('/', auth_tokenVerifier,
+  async (req, res) => {
+    try {
+      const posts = await Post.find().sort({
+        date: -1 // descending order (most recent first)
+      });
+      res.json({
+        msg: "Getting all post is successful",
+        posts_count: posts.length,
+        posts
+      });
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send({
+        msg: "There's an error fetching all posts",
+        error: err
+      });
+    }
+  });
+
 
 // @route    GET api/posts/:id
 // @desc     Get post by ID
 // @access   Private
-router.get('/:id', [auth_tokenVerifier, checkObjectId('id')], async (req, res) => {
+router.get('/:id', [auth_tokenVerifier,
+  checkObjectId('id')
+], async (req, res) => {
+
   try {
-    const post = await Post.findById(req.params.id);
+    const post = await Post.findById(req.params.id); //find documents in posts collection
 
     if (!post) {
       return res.status(404).json({
@@ -91,6 +103,7 @@ router.get('/:id', [auth_tokenVerifier, checkObjectId('id')], async (req, res) =
   }
 });
 
+
 // @route    DELETE api/posts/:id
 // @desc     Delete a post
 // @access   Private
@@ -104,7 +117,7 @@ router.delete('/:id', [auth_tokenVerifier, checkObjectId('id')], async (req, res
       });
     }
 
-    // Check user
+    // Check user who wants to delete the post is the user who create the post
     if (post.user.toString() !== req.user.id) {
       return res.status(401).json({
         msg: 'User not authorized'
@@ -122,6 +135,7 @@ router.delete('/:id', [auth_tokenVerifier, checkObjectId('id')], async (req, res
     res.status(500).send('Server Error');
   }
 });
+
 
 // @route    PUT api/posts/like/:id
 // @desc     Like a post
