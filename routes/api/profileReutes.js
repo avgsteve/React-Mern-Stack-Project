@@ -423,7 +423,7 @@ router.delete('/experience/:exp_id', auth_tokenVerifier,
         }
       }
 
-      const responseMessage = targetDocExists === false ? `Can't find the document of experience item with the id: '${req.params.exp_id}'. Please make sure the id is correct` : `The experience of document id: ${req.params.exp_id} has been deleted and the profile is updated `;
+      const responseMessage = targetDocExists === false ? `Can't find the document of experience item with the id: '${req.params.exp_id}'. Please make sure the id is correct` : `The experience document with id: ${req.params.exp_id} has been deleted and the profile is updated `;
 
 
       // Remove experience document from Array foundProfile.experience (which is an Array containing mutiple experience document obj)
@@ -447,33 +447,43 @@ router.delete('/experience/:exp_id', auth_tokenVerifier,
     }
   });
 
+
+
 // @route    PUT api/profile/education
 // @desc     Add profile education
 // @access   Private
 router.put(
   '/education',
+  auth_tokenVerifier,
+
+  // ===== 1) check if there's any error from input validation first
   [
-    auth_tokenVerifier,
-    [
-      check('school', 'School is required').not().isEmpty(),
-      check('degree', 'Degree is required').not().isEmpty(),
-      check('fieldofstudy', 'Field of study is required').not().isEmpty(),
-      check('from', 'From date is required and needs to be from the past')
-      .not()
-      .isEmpty()
-      .custom((value, {
+    check('school', 'School is required').not().isEmpty(),
+    check('degree', 'Degree is required').not().isEmpty(),
+    check('fieldofstudy', 'Field of study is required').not().isEmpty(),
+    check('from', 'From date is required and needs to be from the past')
+    .not()
+    .isEmpty()
+    .custom(
+      (value, {
         req
-      }) => (req.body.to ? value < req.body.to : true))
-    ]
+      }) => (req.body.to ? value < req.body.to : true)
+    )
   ],
+
+
   async (req, res) => {
     const errors = validationResult(req);
+
+    //if there's any error, send http response
     if (!errors.isEmpty()) {
       return res.status(400).json({
+        input_validation_error: "There's one or more error in the input fields",
         errors: errors.array()
       });
     }
 
+    // ===== 2) Assign input data to the variable respectively
     const {
       school,
       degree,
@@ -494,6 +504,7 @@ router.put(
       description
     };
 
+    // ===== 3) Find the document for profile to add new education data to
     try {
       const profile = await Profile.findOne({
         user: req.user.id
@@ -503,7 +514,11 @@ router.put(
 
       await profile.save();
 
-      res.json(profile);
+      res.json({
+        msg: "The new data for education field has been successfully added!",
+        profile
+      });
+
     } catch (err) {
       console.error(err.message);
       res.status(500).send('Server Error');
@@ -515,23 +530,53 @@ router.put(
 // @desc     Delete education from profile
 // @access   Private
 
-router.delete('/education/:edu_id', auth_tokenVerifier, async (req, res) => {
-  try {
-    const foundProfile = await Profile.findOne({
-      user: req.user.id
-    });
-    foundProfile.education = foundProfile.education.filter(
-      (edu) => edu._id.toString() !== req.params.edu_id
-    );
-    await foundProfile.save();
-    return res.status(200).json(foundProfile);
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({
-      msg: 'Server error'
-    });
-  }
-});
+router.delete('/education/:edu_id', auth_tokenVerifier,
+  //
+  async (req, res) => {
+    try {
+      const foundProfile = await Profile.findOne({
+        user: req.user.id
+      });
+
+
+      var targetDocExists = false;
+      //  foundProfile.experience // Array
+      // var experienceDocumentId;
+
+      console.log("\n\nCurrent id of the targer document is:" + req.params.edu_id + "\n\n");
+
+      for (let educationEntry of foundProfile.education) {
+
+
+        if (educationEntry._id.toString() === req.params.edu_id) {
+          console.log('Found the id: ', educationEntry._id);
+          targetDocExists = true;
+          break;
+        }
+      }
+
+      const responseMessage = targetDocExists === false ? `Can't find the document of experience item with the id: '${req.params.edu_id}'. Please make sure the id is correct` : `The education document with id: ${req.params.edu_id} has been deleted and the profile is updated `;
+
+
+      // Remove education document from Array foundProfile.experience (which is an Array containing mutiple education document obj)
+      foundProfile.education = foundProfile.education.filter(
+        (eduEntry) => eduEntry._id.toString() !== req.params.edu_id
+      );
+
+      await foundProfile.save();
+
+      return res.status(200).json({
+        msg: responseMessage,
+        foundProfile // send updated Array of education documents
+      });
+
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        msg: 'Server error'
+      });
+    }
+  });
 
 // @route    GET api/profile/github/:username
 // @desc     Get user repos from Github
