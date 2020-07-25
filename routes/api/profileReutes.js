@@ -583,18 +583,48 @@ router.delete('/education/:edu_id', auth_tokenVerifier,
 // @access   Public
 router.get('/github/:username', async (req, res) => {
   try {
+
+    // === Use Axios to send GET request to GitHub from Node.js backend
+
     const uri = encodeURI(
       `https://api.github.com/users/${req.params.username}/repos?per_page=5&sort=created:asc`
     );
+
     const headers = {
       'user-agent': 'node.js',
       Authorization: `token ${config.get('githubToken')}`
     };
 
+
+    // const gitHubResponse = await axios.get(uri, {
+    //   headers
+    // });
+
     const gitHubResponse = await axios.get(uri, {
       headers
+    }).then(result => {
+
+      console.log("\nThe result of GET request to GitHub:\n");
+      console.log(result.data);
+      console.log("\n====================================\n");
+
+      return res.json({
+        msg: "GET request to GitHub successed!",
+        data: result.data
+      });
+
+      // res.json(JSON.parse(body));
+
+    }).catch((err) => {
+
+      console.log("\nThere's an error in GET request to GitHub:\n");
+      console.log(err.response); // the response from github
+      console.log("\n====================================\n");
     });
-    return res.json(gitHubResponse.data);
+
+    // res
+    return res.status(200).json(gitHubResponse.data);
+
   } catch (err) {
     console.error(err.message);
     return res.status(404).json({
