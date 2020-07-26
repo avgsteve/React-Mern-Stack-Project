@@ -330,25 +330,27 @@ router.delete('/comment/:id/:comment_id', auth_tokenVerifier,
           msg: 'Comment does not exist'
         });
       }
-      // Check user
+      // Check user. Only the user in the comment (means the user is author) can delete the comment
       if (comment.user.toString() !== req.user.id) {
         return res.status(401).json({
           msg: 'User not authorized'
         });
       }
 
+      //use the filtered comments Array (from post.comments) to update the post.comments
       post.comments = post.comments.filter(
         ({
           id
-        }) => id !== req.params.comment_id
+        }) => id !== req.params.comment_id // all the comments which are not matched will be returned as the items to the new array
       );
 
-      await post.save();
+      await post.save(); // the updated post.comments will be saved
 
-      const deleted_post_snippet = post.text.slice(0, 10);
+      // create snippet of the deleted comment to be send as part of HTTP response message
+      const deleted_post_snippet = post.text.slice(0, 20);
 
       return res.status(200).json({
-        msg: `The comment: "${deleted_post_snippet} ..." has been deleted from the post`,
+        msg: `The comment: ''${deleted_post_snippet} ...'' has been deleted from the post`,
         comment_counts: post.comments.length,
         comments: post.comments
       });
