@@ -194,6 +194,8 @@ router.put('/like/:id', [auth_tokenVerifier, // Like a post
 // @route    PUT api/posts/unlike/:id
 // @desc     Unlike a post
 // @access   Private
+
+
 router.put('/unlike/:id', [auth_tokenVerifier, //Unlike a post
   checkObjectId('id')
 ], async (req, res) => {
@@ -253,19 +255,27 @@ router.put('/unlike/:id', [auth_tokenVerifier, //Unlike a post
   }
 });
 
+
+// ==== COMMENING A POST ====
+
 // @route    POST api/posts/comment/:id
 // @desc     Comment on a post
 // @access   Private
+
 router.post('/comment/:id', //Comment on a post
   [
     auth_tokenVerifier,
     checkObjectId('id'),
     [check('text', 'Text is required').not().isEmpty()]
   ],
+
   async (req, res) => {
+
+    // Check if there's any error from validationResult
     const errors = validationResult(req);
+
     if (!errors.isEmpty()) {
-      return res.status(400).json({
+      return res.status(400).json({ // return error data if the errors Array from validationResult(req) is not empty
         errors: errors.array()
       });
     }
@@ -274,18 +284,24 @@ router.post('/comment/:id', //Comment on a post
       const user = await User.findById(req.user.id).select('-password');
       const post = await Post.findById(req.params.id);
 
-      const newComment = {
+      const newComment = { // Get comment content from req.body.text
         text: req.body.text,
+        user: req.user.id,
         name: user.name,
-        avatar: user.avatar,
-        user: req.user.id
+        avatar: user.avatar
       };
 
-      post.comments.unshift(newComment);
+      post.comments.unshift(newComment); // add newComment to .comments Array
 
       await post.save();
 
-      res.json(post.comments);
+      res.status(200).json({
+        msg: "New comment has been added to the post",
+        original_post: post,
+        comment_counts: post.comments.length,
+        comments: post.comments
+      });
+
     } catch (err) {
       console.error(err.message);
       res.status(500).send('Server Error');
@@ -296,15 +312,18 @@ router.post('/comment/:id', //Comment on a post
 // @route    DELETE api/posts/comment/:id/:comment_id
 // @desc     Delete comment from a post
 // @access   Private
-router.delete('/comment/:id/:comment_id', auth_tokenVerifier, //@desc     Delete comment from a post
+router.delete('/comment/:id/:comment_id', auth_tokenVerifier,
+
   async (req, res) => {
     try {
       const post = await Post.findById(req.params.id);
 
-      // Pull out comment
+      // Pull out and loop through comments from Post document
       const comment = post.comments.find(
+        //Then find if there's any comment has the id matched the req.params.id
         comment => comment.id === req.params.comment_id
       );
+
       // Make sure comment exists
       if (!comment) {
         return res.status(404).json({
@@ -326,9 +345,16 @@ router.delete('/comment/:id/:comment_id', auth_tokenVerifier, //@desc     Delete
 
       await post.save();
 
-      return res.json(post.comments);
+      const deleted_post_snippet = post.text.slice(0, 10);
+
+      return res.status(200).json({
+        msg: `The comment: "${deleted_post_snippet} ..." has been deleted from the post`,
+        comment_counts: post.comments.length,
+        comments: post.comments
+      });
+
     } catch (err) {
-      console.error(err.message);
+      console.log("There's an error while creating a new comment in the post: ", err);
       return res.status(500).send('Server Error');
     }
   });
