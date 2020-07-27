@@ -1,8 +1,8 @@
 /*jshint esversion: 6 */
 /*jshint esversion: 8 */
-const mongoose = require('mongoose');
+const mongoose = require( 'mongoose' );
 
-const ProfileSchema = new mongoose.Schema({
+const ProfileSchema = new mongoose.Schema( {
   user: { // this field will have user document's "name" and "avatat" field data by populating data in profileReutes.js as GET@api/profile/me
     type: mongoose.Schema.Types.ObjectId,
     ref: 'user'
@@ -21,7 +21,7 @@ const ProfileSchema = new mongoose.Schema({
     required: true
   },
   skills: {
-    type: [String], // will be Array of strings to store multiple skills input
+    type: [ String ], // will be Array of strings to store multiple skills input
     required: true
   },
   bio: {
@@ -30,7 +30,7 @@ const ProfileSchema = new mongoose.Schema({
   githubusername: {
     type: String
   },
-  experience: [{
+  experience: [ {
     title: {
       type: String,
       required: true
@@ -56,8 +56,8 @@ const ProfileSchema = new mongoose.Schema({
     description: {
       type: String
     }
-  }],
-  education: [{
+  } ],
+  education: [ {
     school: {
       type: String,
       required: true
@@ -84,7 +84,7 @@ const ProfileSchema = new mongoose.Schema({
     description: {
       type: String
     }
-  }],
+  } ],
   social: {
     youtube: {
       type: String
@@ -106,6 +106,6 @@ const ProfileSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   }
-});
+} );
 
-module.exports = mongoose.model('profile', ProfileSchema);
+module.exports = mongoose.model( 'profile', ProfileSchema );

@@ -1,9 +1,9 @@
 /*jshint esversion: 6 */
 /*jshint esversion: 8 */
-const mongoose = require('mongoose');
+const mongoose = require( 'mongoose' );
 const Schema = mongoose.Schema;
 
-const PostSchema = new Schema({
+const PostSchema = new Schema( {
   user: {
     type: Schema.Types.ObjectId
   },
@@ -17,12 +17,12 @@ const PostSchema = new Schema({
   avatar: {
     type: String
   },
-  likes: [{
+  likes: [ {
     user: {
       type: Schema.Types.ObjectId
     }
-  }],
-  comments: [{
+  } ],
+  comments: [ {
     user: {
       type: Schema.Types.ObjectId
     },
@@ -40,11 +40,11 @@ const PostSchema = new Schema({
       type: Date,
       default: Date.now
     }
-  }],
+  } ],
   date: {
     type: Date,
     default: Date.now
   }
-});
+} );
 
-module.exports = mongoose.model('post', PostSchema);
+module.exports = mongoose.model( 'post', PostSchema );
