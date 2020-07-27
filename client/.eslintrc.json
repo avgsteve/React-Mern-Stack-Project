@@ -19,7 +19,7 @@
   ],
   "rules": {
     "semi": [2, "always"],
-    "space-in-parens": ["error", "always"]
-
+    "space-in-parens": ["error", "always"],
+    "computed-property-spacing": ["error", "always"]
   }
 }
