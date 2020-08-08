@@ -2,37 +2,44 @@ import React, { Fragment } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { logout } from '../../actions/auth';
+import { action_Auth_logout } from '../../actions/auth';
 
-const Navbar = ( {
-  auth: {
+const Navbar = ({ //arguments:
+  auth: { //destructure auth property from state
     isAuthenticated,
     loading
   },
-  logout
-} ) => {
-  const authLinks = ( <ul>
-    <li>
-      <Link to='/profiles'>Developers</Link>
-    </li>
-    <li>
-      <Link to='/posts'>Posts</Link>
-    </li>
-    <li>
-      <Link to='/dashboard'>
-        <i className='fas fa-user'/>{' '}
-        <span className='hide-sm'>Dashboard</span>
-      </Link>
-    </li>
-    <li>
-      <a onClick={logout} href='#!'>
-        <i className='fas fa-sign-out-alt'/>{' '}
-        <span className='hide-sm'>Logout</span>
-      </a>
-    </li>
-  </ul> );
+  action_Auth_logout
 
-  const guestLinks = ( <ul>
+}) => {
+
+  const authLinks = (
+    <ul>
+      <li>
+        <Link to='/profiles'>Developers</Link>
+      </li>
+      <li>
+        <Link to='/posts'>Posts</Link>
+      </li>
+      <li>
+        <Link to='/dashboard'>
+          <i className='fas fa-user' />{' '}
+          <span className='hide-sm'>Dashboard</span>
+        </Link>
+      </li>
+
+      {/* == Logout button ==*/}
+      <li>
+        <a onClick={action_Auth_logout} href='#!'>
+          <i className='fas fa-sign-out-alt' />{' '}
+          <span className='hide-sm'>Logout</span>
+        </a>
+      </li>
+    </ul>);
+
+  const guestLinks = (<ul>
+
+
     <li>
       <Link to='/profiles'>Developers</Link>
     </li>
@@ -42,30 +49,38 @@ const Navbar = ( {
     <li>
       <Link to='/login'>Login</Link>
     </li>
-  </ul> );
+  </ul>);
 
-  return ( <nav className='navbar bg-dark'>
-    <h1>
-      <Link to='/'>
-        <i className='fas fa-code'/>
+
+  return (
+
+    <nav className='navbar bg-dark'>
+
+      <h1>
+        <Link to='/'>
+          <i className='fas fa-code' />
         DevConnector
       </Link>
-    </h1>
-    {
-      !loading && ( <Fragment>{
-        isAuthenticated
-          ? authLinks
-          : guestLinks
-      }</Fragment> )
-    }
-  </nav> );
+      </h1>
+
+      {
+        !loading && (
+          <Fragment>{
+            isAuthenticated
+              ? authLinks
+              : guestLinks
+          }</Fragment>)
+      }
+
+    </nav>);
+
 };
 
 Navbar.propTypes = {
-  logout: PropTypes.func.isRequired,
+  action_Auth_logout: PropTypes.func.isRequired,
   auth: PropTypes.object.isRequired
 };
 
-const mapStateToProps = state => ( { auth: state.auth } );
+const mapStateToProps = state => ({ auth: state.auth });
 
-export default connect( mapStateToProps, { logout } )( Navbar );
+export default connect(mapStateToProps, { action_Auth_logout })(Navbar);
