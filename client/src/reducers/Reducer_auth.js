@@ -12,7 +12,7 @@ import {
 const initialState = {
   token: localStorage.getItem('token'),
   isAuthenticated: null,
-  loading: true,
+  loading: true, // will be false once the user data is fetched
   user: null
 };
 
@@ -27,13 +27,29 @@ export default function (state = initialState, action) {
         loading: false,
         user: payload
       };
+
+
     case REGISTER_SUCCESS:
+
+      //localStorage.setItem('token', payload.token) // get token from payload
       return {
         ...state,
         ...payload,
         isAuthenticated: true,
         loading: false
       };
+
+
+    // case REGISTER_FAIL:
+    //   //localStorage.removeItem('token') // remove token from localStorage
+    //   return {
+    //     ...state,
+    //     token: null,
+    //     isAuthenticated: false,
+    //     loading: false
+    //   };
+
+
     case LOGIN_SUCCESS:
       return {
         ...state,
@@ -41,6 +57,8 @@ export default function (state = initialState, action) {
         isAuthenticated: true,
         loading: false
       };
+
+
     case ACCOUNT_DELETED:
       return {
         ...state,

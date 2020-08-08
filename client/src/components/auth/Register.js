@@ -2,11 +2,11 @@ import React, { Fragment, useState } from 'react';
 import { connect } from 'react-redux';
 import { Link, Redirect } from 'react-router-dom';
 import { action_setAlert } from '../../actions/action_alert';
-import { register } from '../../actions/auth';
+import { action_register } from '../../actions/auth';
 import PropTypes from 'prop-types';
 // import Axios from 'axios';
 
-const Register = ({ action_setAlert, register, isAuthenticated }) => {
+const Register = ({ action_setAlert, action_register, isAuthenticated }) => {
 
   const [data_in_form, set_data_in_Form] = useState(
     // initial state of forData
@@ -34,41 +34,42 @@ const Register = ({ action_setAlert, register, isAuthenticated }) => {
   //       }
   //     }, 1000);
 
-  const onSubmit = async (e) => {
-
-    e.preventDefault();
-
-    if (password !== password_confirm) {
-      action_setAlert('Passwords do not match', 'danger');
-
-    } else {
-
-      register({ name, email, password });
-
-      // //  ===== for testing ====
-      // const newUserData = { name, email, password };
-
-      // // fetch token here
-      // try {
-      //   const config = {
-      //     headers: {
-      //       'Content-Type': 'application/json'
-      //     }
-      //   };
-      //   const body = JSON.stringify(newUserData);
-      //   const res = await Axios.post('/api/users', body, config);
-      //   console.log(res.data);
-      // } catch (err) {
-      //   console.log(`There's an error while registering new user`, err);
-      // }
-      // //  ===== for testing ====
-
-    }
-  };
 
   if (isAuthenticated) {
     return <Redirect to="/dashboard" />;
   }
+
+
+  const onSubmit = async (e) => {
+
+    e.preventDefault();
+
+    if (name === "") action_setAlert('Please enter your name', 'danger');
+    if (email === "") action_setAlert('Please enter your email', 'danger');
+    if (password === "") action_setAlert('Please enter your password', 'danger');
+    if (password || (password !== password_confirm)) action_setAlert('Passwords do not match', 'danger');
+
+    action_register({ name, email, password });
+
+    // //  ===== for testing ====
+    // const newUserData = { name, email, password };
+
+    // // fetch token here
+    // try {
+    //   const config = {
+    //     headers: {
+    //       'Content-Type': 'application/json'
+    //     }
+    //   };
+    //   const body = JSON.stringify(newUserData);
+    //   const res = await Axios.post('/api/users', body, config);
+    //   console.log(res.data);
+    // } catch (err) {
+    //   console.log(`There's an error while registering new user`, err);
+    // }
+    // //  ===== for testing ====
+
+  };
 
   return (<Fragment>
 
@@ -117,10 +118,10 @@ const Register = ({ action_setAlert, register, isAuthenticated }) => {
 
 Register.propTypes = {
   action_setAlert: PropTypes.func.isRequired,
-  register: PropTypes.func.isRequired,
+  action_register: PropTypes.func.isRequired,
   isAuthenticated: PropTypes.bool
 };
 
 const mapStateToProps = (state) => ({ isAuthenticated: state.auth.isAuthenticated });
 
-export default connect(mapStateToProps, { action_setAlert, register })(Register);
+export default connect(mapStateToProps, { action_setAlert, action_register })(Register);
