@@ -1,5 +1,5 @@
 import AxiosApi from '../utils/api';
-import { setAlert } from './action_alert';
+import { action_setAlert } from './action_alert';
 import {
   GET_POSTS,
   POST_ERROR,
@@ -72,7 +72,7 @@ export const deletePost = id => async dispatch => {
       payload: id
     });
 
-    dispatch(setAlert('Post Removed', 'success'));
+    dispatch(action_setAlert('Post Removed', 'success'));
   } catch (err) {
     dispatch({
       type: POST_ERROR,
@@ -91,7 +91,7 @@ export const addPost = formData => async dispatch => {
       payload: res.data.new_post
     });
 
-    dispatch(setAlert('Post Created', 'success'));
+    dispatch(action_setAlert('Post Created', 'success'));
   } catch (err) {
     dispatch({
       type: POST_ERROR,
@@ -130,7 +130,7 @@ export const addComment = (postId, formData) => async dispatch => {
       payload: res.data.comments
     });
 
-    dispatch(setAlert('Comment Added', 'success'));
+    dispatch(action_setAlert('Comment Added', 'success'));
   } catch (err) {
     dispatch({
       type: POST_ERROR,
@@ -149,7 +149,7 @@ export const deleteComment = (postId, commentId) => async dispatch => {
       payload: commentId
     });
 
-    dispatch(setAlert('Comment Removed', 'success'));
+    dispatch(action_setAlert('Comment Removed', 'success'));
   } catch (err) {
     dispatch({
       type: POST_ERROR,

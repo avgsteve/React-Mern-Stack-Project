@@ -1,5 +1,5 @@
 import api from '../utils/api';
-import { setAlert } from './action_alert';
+import { action_setAlert } from './action_alert';
 import {
   REGISTER_SUCCESS,
   REGISTER_FAIL,
@@ -40,7 +40,7 @@ export const register = formData => async dispatch => {
     const errors = err.response.data.errors;
 
     if (errors) {
-      errors.forEach(error => dispatch(setAlert(error.msg, 'danger')));
+      errors.forEach(error => dispatch(action_setAlert(error.msg, 'danger')));
     }
 
     dispatch({
@@ -66,7 +66,7 @@ export const login = (email, password) => async dispatch => {
     const errors = err.response.data.errors;
 
     if (errors) {
-      errors.forEach(error => dispatch(setAlert(error.msg, 'danger')));
+      errors.forEach(error => dispatch(action_setAlert(error.msg, 'danger')));
     }
 
     dispatch({
