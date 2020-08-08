@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import alert from './alert';
+import alert from './Reducer_alert';
 import auth from './Reducer_auth';
 import profile from './profile';
 import post from './post';

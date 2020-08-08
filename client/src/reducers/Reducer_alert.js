@@ -2,7 +2,10 @@ import { SET_ALERT, REMOVE_ALERT } from '../actions/types';
 
 const initialState = [];
 
-export default function(state = initialState, action) {
+
+//receive state & type by dispatch function in action file
+export default function (state = initialState, action) {
+
   const { type, payload } = action;
 
   switch (type) {
@@ -13,4 +16,5 @@ export default function(state = initialState, action) {
     default:
       return state;
   }
+
 }

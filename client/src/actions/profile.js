@@ -1,7 +1,7 @@
 import AxiosApi from '../utils/api';
 import {
   setAlert
-} from './alert';
+} from './action_alert';
 
 import {
   GET_PROFILE,

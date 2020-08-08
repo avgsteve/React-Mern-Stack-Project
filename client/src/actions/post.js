@@ -1,5 +1,5 @@
 import AxiosApi from '../utils/api';
-import { setAlert } from './alert';
+import { setAlert } from './action_alert';
 import {
   GET_POSTS,
   POST_ERROR,

@@ -1,5 +1,5 @@
 import api from '../utils/api';
-import { setAlert } from './alert';
+import { setAlert } from './action_alert';
 import {
   REGISTER_SUCCESS,
   REGISTER_FAIL,
