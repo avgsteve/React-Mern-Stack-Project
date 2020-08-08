@@ -2,20 +2,20 @@ import axios from 'axios';
 import store from '../store';
 import { LOGOUT } from '../actions/types';
 
-const api = axios.create({
+const AxiosApi = axios.create({
   baseURL: '/api',
   headers: {
     'Content-Type': 'application/json'
   }
 });
 /**
- intercept any error responses from the api
+ intercept any error responses from the AxiosApi
  and check if the token is no longer valid.
  ie. Token has expired
  logout the user if the token has expired
 **/
 
-api.interceptors.response.use(
+AxiosApi.interceptors.response.use(
   res => res,
   err => {
     if (err.response.data.msg === 'Token is not valid') {
@@ -25,4 +25,4 @@ api.interceptors.response.use(
   }
 );
 
-export default api;
+export default AxiosApi;

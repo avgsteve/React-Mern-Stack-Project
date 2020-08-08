@@ -4,19 +4,19 @@ import {
   UPDATE_LIKES,
   DELETE_POST,
   ADD_POST,
-  GET_POST,
+  GET_SIGNLE_POST,
   ADD_COMMENT,
   REMOVE_COMMENT
 } from '../actions/types';
 
 const initialState = {
   posts: [],
-  post: null,
+  single_post_for_edit: null,
   loading: true,
   error: {}
 };
 
-export default function(state = initialState, action) {
+export default function (state = initialState, action) {
   const { type, payload } = action;
 
   switch (type) {
@@ -26,10 +26,11 @@ export default function(state = initialState, action) {
         posts: payload,
         loading: false
       };
-    case GET_POST:
+
+    case GET_SIGNLE_POST:
       return {
         ...state,
-        post: payload,
+        single_post_for_edit: payload,
         loading: false
       };
     case ADD_POST:

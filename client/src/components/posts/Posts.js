@@ -3,12 +3,17 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import PostItem from './PostItem';
 import PostForm from './PostForm';
-import { getPosts } from '../../actions/post';
+import { getPosts, } from '../../actions/post';
+
+
 
 const Posts = ({ getPosts, post: { posts } }) => {
   useEffect(() => {
     getPosts();
   }, [getPosts]);
+
+
+  // console.log(`The object "post" in Posts.js`);
 
   return (
     <Fragment>
@@ -32,7 +37,11 @@ Posts.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  post: state.post
+  post: state.post,
+  // sub-props:  posts, single_post_for_edit, loading, error
+  current_post: state.post.single_post_for_edit,
+
+
 });
 
 export default connect(mapStateToProps, { getPosts })(Posts);

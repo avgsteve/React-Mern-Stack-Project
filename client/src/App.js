@@ -13,22 +13,22 @@ import setAuthToken from './utils/setAuthToken';
 import './App.css';
 
 const App = () => {
-  useEffect( () => {
-    setAuthToken( localStorage.token );
-    store.dispatch( loadUser() );
-  }, [] );
+  useEffect(() => {
+    setAuthToken(localStorage.token);
+    store.dispatch(loadUser());
+  }, []);
 
-  return ( <Provider store={store}>
+  return (<Provider store={store}>
     <Router>
       <Fragment>
-        <Navbar/>
+        <Navbar />
         <Switch>
-          <Route exact="exact" path="/" component={Landing}/>
-          <Route component={Routes}/>
+          <Route exact path="/" component={Landing} />
+          <Route component={Routes} />
         </Switch>
       </Fragment>
     </Router>
-  </Provider> );
+  </Provider>);
 };
 
 export default App;

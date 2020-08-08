@@ -11,11 +11,14 @@ const CommentForm = ({ postId, addComment }) => {
       <div className='bg-primary p'>
         <h3>Leave a Comment</h3>
       </div>
+
       <form
         className='form my-1'
         onSubmit={e => {
           e.preventDefault();
+
           addComment(postId, { text });
+
           setText('');
         }}
       >
