@@ -101,11 +101,10 @@ export const getGithubRepos = username => async dispatch => {
 };
 
 // Create or update profile
-export const createProfile = (
+export const action_createProfile = (
   formData,
   history,
   edit = false
-
 ) => async dispatch => {
 
 
