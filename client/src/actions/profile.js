@@ -14,8 +14,8 @@ import {
   NO_REPOS
 } from './types';
 
-// Get current users profile
-export const getCurrentProfile = () => async dispatch => {
+// Get current users profile in <Dashboard />  <ProfileForm /> 
+export const action_getUserProfile = () => async dispatch => {
   try {
     const res = await AxiosApi.get('/profile/me');
 

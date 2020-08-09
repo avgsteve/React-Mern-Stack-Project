@@ -8,6 +8,7 @@ import {
   NO_REPOS
 } from '../actions/types';
 
+// ---- Inititial states ----
 const initialState = {
   profile: null,
   profiles: [],
@@ -16,10 +17,14 @@ const initialState = {
   error: {}
 };
 
+
+// ---- Function for create Redux store data and Swith for received action type & payload ----
 export default function (state = initialState, action) {
+
   const { type, payload } = action;
 
   switch (type) {
+
     case GET_PROFILE:
     case UPDATE_PROFILE:
       return {
@@ -27,12 +32,14 @@ export default function (state = initialState, action) {
         profile: payload,
         loading: false
       };
+
     case GET_PROFILES:
       return {
         ...state,
         profiles: payload,
         loading: false
       };
+
     case PROFILE_ERROR:
       return {
         ...state,
@@ -40,18 +47,21 @@ export default function (state = initialState, action) {
         loading: false,
         profile: null
       };
+
     case CLEAR_PROFILE:
       return {
         ...state,
         profile: null,
         repos: []
       };
+
     case GET_REPOS:
       return {
         ...state,
         repos: payload,
         loading: false
       };
+
     case NO_REPOS:
       return {
         ...state,
@@ -60,4 +70,5 @@ export default function (state = initialState, action) {
     default:
       return state;
   }
+
 }

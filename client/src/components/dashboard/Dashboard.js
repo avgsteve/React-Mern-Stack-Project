@@ -5,17 +5,22 @@ import { connect } from 'react-redux';
 import DashboardActions from './DashboardActions';
 import Experience from './Experience';
 import Education from './Education';
-import { getCurrentProfile, deleteAccount } from '../../actions/profile';
+import { action_getUserProfile, deleteAccount } from '../../actions/profile';
 
 const Dashboard = ({
-  getCurrentProfile,
+
+  action_getUserProfile,
   deleteAccount,
-  auth: { user },
-  profile: { profile }
+  auth_state_in_Redux: { user },
+  profile_state_in_Redux: { profile }
+
 }) => {
+
+
   useEffect(() => {
-    getCurrentProfile();
-  }, [getCurrentProfile]);
+    action_getUserProfile();
+  }, [action_getUserProfile]);
+
 
   return (
     <Fragment>
@@ -36,29 +41,29 @@ const Dashboard = ({
           </div>
         </Fragment>
       ) : (
-        <Fragment>
-          <p>You have not yet setup a profile, please add some info</p>
-          <Link to="/create-profile" className="btn btn-primary my-1">
-            Create Profile
+          <Fragment>
+            <p>You have not yet setup a profile, please add some info</p>
+            <Link to="/create-profile" className="btn btn-primary my-1">
+              Create Profile
           </Link>
-        </Fragment>
-      )}
+          </Fragment>
+        )}
     </Fragment>
   );
 };
 
 Dashboard.propTypes = {
-  getCurrentProfile: PropTypes.func.isRequired,
+  action_getUserProfile: PropTypes.func.isRequired,
   deleteAccount: PropTypes.func.isRequired,
-  auth: PropTypes.object.isRequired,
-  profile: PropTypes.object.isRequired
+  auth_state_in_Redux: PropTypes.object.isRequired,
+  profile_state_in_Redux: PropTypes.object.isRequired
 };
 
 const mapStateToProps = (state) => ({
-  auth: state.auth,
-  profile: state.profile
+  auth_state_in_Redux: state.auth,
+  profile_state_in_Redux: state.profile
 });
 
-export default connect(mapStateToProps, { getCurrentProfile, deleteAccount })(
+export default connect(mapStateToProps, { action_getUserProfile, deleteAccount })(
   Dashboard
 );

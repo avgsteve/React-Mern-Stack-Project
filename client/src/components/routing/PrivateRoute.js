@@ -20,17 +20,13 @@ const PrivateRoute = (
     ...props_from_parent
   }
 
-) => ( // function body:
+) => /* function body:*/(
 
-    //Will return a Route Componen:
-
-    <Route  {...props_from_parent} // use parent's prop here to pass objects to the child props by "render"
+    <Route {...props_from_parent} // use parent's prop here to pass objects to the child props by "render"
 
       render={
         props_from_arguments =>
-
           // Use props_for_rendering (props from arguments) to check:
-
           // #1 Whether to show pinner depending on loading state
           loading === true ? (<Spinner />) : isAuthenticated ?
 
@@ -38,11 +34,7 @@ const PrivateRoute = (
             (<ComponentToRender {...props_from_arguments} />) :
 
             // OR, if not authenticaed,  redirect user
-            (<Redirect to="/login" />)
-
-
-      }
-    />
+            (<Redirect to="/login" />)} />
 
   );
 

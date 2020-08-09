@@ -2,7 +2,7 @@ import React, { Fragment, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { createProfile, getCurrentProfile } from '../../actions/profile';
+import { createProfile, action_getUserProfile } from '../../actions/profile';
 
 const initialState = {
   company: '',
@@ -22,7 +22,7 @@ const initialState = {
 const ProfileForm = ({
   profile: { profile, loading },
   createProfile,
-  getCurrentProfile,
+  action_getUserProfile,
   history
 }) => {
   const [formData, setFormData] = useState(initialState);
@@ -30,7 +30,7 @@ const ProfileForm = ({
   const [displaySocialInputs, toggleSocialInputs] = useState(false);
 
   useEffect(() => {
-    if (!profile) getCurrentProfile();
+    if (!profile) action_getUserProfile();
     if (!loading && profile) {
       const profileData = { ...initialState };
       for (const key in profile) {
@@ -43,7 +43,7 @@ const ProfileForm = ({
         profileData.skills = profileData.skills.join(', ');
       setFormData(profileData);
     }
-  }, [loading, getCurrentProfile, profile]);
+  }, [loading, action_getUserProfile, profile]);
 
   const {
     company,
@@ -244,7 +244,7 @@ const ProfileForm = ({
 
 ProfileForm.propTypes = {
   createProfile: PropTypes.func.isRequired,
-  getCurrentProfile: PropTypes.func.isRequired,
+  action_getUserProfile: PropTypes.func.isRequired,
   profile: PropTypes.object.isRequired
 };
 
@@ -252,6 +252,6 @@ const mapStateToProps = state => ({
   profile: state.profile
 });
 
-export default connect(mapStateToProps, { createProfile, getCurrentProfile })(
+export default connect(mapStateToProps, { createProfile, action_getUserProfile })(
   ProfileForm
 );
