@@ -13,7 +13,7 @@ import setAuthToken from '../utils/setAuthToken';
 
 
 
-// Load User (every time hits the private route)
+// Load User Info (after user login & register)
 export const action_loadUser = () => async dispatch => {
 
   console.log('action_loadUser is executed!');
@@ -79,6 +79,7 @@ export const action_login = (email, password) => async dispatch => {
 
   const body = { email, password };
 
+  // If login is successful, get user's info
   try {
     const res = await AxiosApi.post('/auth', body);
 
@@ -87,9 +88,10 @@ export const action_login = (email, password) => async dispatch => {
       payload: res.data
     });
 
-    dispatch(action_loadUser()); // use action_loadUser to get User's info from API
+    // User's info from API
+    dispatch(action_loadUser());
 
-
+    // If login is failed, get user's info, set alert & clear user's token
   } catch (err) {
     const errors = err.response.data.errors;
 
@@ -102,6 +104,7 @@ export const action_login = (email, password) => async dispatch => {
     });
   }
 };
+
 
 // Logout
 export const action_Auth_logout = () => ({ type: LOGOUT });
