@@ -25,6 +25,7 @@ export default function (state = initialState, action) {
 
   switch (type) {
 
+    // get one user's profile by action_getUserProfile
     case GET_PROFILE:
     case UPDATE_PROFILE:
       return {
@@ -33,6 +34,7 @@ export default function (state = initialState, action) {
         loading: false
       };
 
+    // get All users's profile by action_getProfiles
     case GET_PROFILES:
       return {
         ...state,
@@ -45,7 +47,7 @@ export default function (state = initialState, action) {
         ...state,
         error: payload,
         loading: false,
-        profile: null
+        profile: null // reset profile
       };
 
     case CLEAR_PROFILE:

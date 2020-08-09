@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import DashboardActions from './DashboardActions';
 import Experience from './Experience';
 import Education from './Education';
-import { action_getUserProfile, deleteAccount } from '../../actions/profile';
+import { action_getUserProfile, deleteAccount } from '../../actions/action_profile';
 
 const Dashboard = ({
 
@@ -15,7 +15,6 @@ const Dashboard = ({
   profile_state_in_Redux: { profile }
 
 }) => {
-
 
   useEffect(() => {
     action_getUserProfile();

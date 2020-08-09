@@ -16,12 +16,15 @@ import {
 
 // Get current users profile in <Dashboard />  <ProfileForm /> 
 export const action_getUserProfile = () => async dispatch => {
+
   try {
+
     const res = await AxiosApi.get('/profile/me');
 
     dispatch({
       type: GET_PROFILE,
       payload: res.data.profile
+
     });
   } catch (err) {
     dispatch({
@@ -35,7 +38,7 @@ export const action_getUserProfile = () => async dispatch => {
 };
 
 // Get all profiles
-export const getProfiles = () => async dispatch => {
+export const action_getProfiles = () => async dispatch => {
   dispatch({
     type: CLEAR_PROFILE
   });

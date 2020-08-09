@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import Moment from 'react-moment';
 import moment from 'moment';
 import { connect } from 'react-redux';
-import { deleteExperience } from '../../actions/profile';
+import { deleteExperience } from '../../actions/action_profile';
 
 const Experience = ({ experience, deleteExperience }) => {
   const experiences = experience.map(exp => (
@@ -15,8 +15,8 @@ const Experience = ({ experience, deleteExperience }) => {
         {exp.to === null ? (
           ' Now'
         ) : (
-          <Moment format="YYYY/MM/DD">{moment.utc(exp.to)}</Moment>
-        )}
+            <Moment format="YYYY/MM/DD">{moment.utc(exp.to)}</Moment>
+          )}
       </td>
       <td>
         <button

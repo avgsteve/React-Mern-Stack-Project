@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import Moment from 'react-moment';
 import moment from 'moment';
 import { connect } from 'react-redux';
-import { deleteEducation } from '../../actions/profile';
+import { deleteEducation } from '../../actions/action_profile';
 
 const Education = ({ education, deleteEducation }) => {
   const educations = education.map(edu => (
@@ -15,8 +15,8 @@ const Education = ({ education, deleteEducation }) => {
         {edu.to === null ? (
           ' Now'
         ) : (
-          <Moment format="YYYY/MM/DD">{moment.utc(edu.to)}</Moment>
-        )}
+            <Moment format="YYYY/MM/DD">{moment.utc(edu.to)}</Moment>
+          )}
       </td>
       <td>
         <button

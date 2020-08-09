@@ -3,14 +3,21 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Spinner from '../layout/Spinner';
 import ProfileItem from './ProfileItem';
-import { getProfiles } from '../../actions/profile';
+import { action_getProfiles } from '../../actions/action_profile';
 
 
 // <Profile /> is used by Routes.js for path="/profiles"
-const Profiles = ({ getProfiles, profile: { profiles, loading } }) => {
+const Profiles = (
+  {
+    action_getProfiles,
+    profile_state_in_Redux: {
+      profiles,
+      loading }
+  }
+) => {
   useEffect(() => {
-    getProfiles();
-  }, [getProfiles]);
+    action_getProfiles();
+  }, [action_getProfiles]);
 
   return (
     <Fragment>
@@ -39,15 +46,15 @@ const Profiles = ({ getProfiles, profile: { profiles, loading } }) => {
 };
 
 Profiles.propTypes = {
-  getProfiles: PropTypes.func.isRequired,
-  profile: PropTypes.object.isRequired
+  action_getProfiles: PropTypes.func.isRequired,
+  profile_state_in_Redux: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => ({
-  profile: state.profile
+  profile_state_in_Redux: state.profile
 });
 
 export default connect(
   mapStateToProps,
-  { getProfiles }
+  { action_getProfiles }
 )(Profiles);
