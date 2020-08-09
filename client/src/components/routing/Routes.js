@@ -23,6 +23,8 @@ const Routes = props => {
         <Route exact path="/login" component={Login} />
         <Route exact path="/profiles" component={Profiles} />
         <Route exact path="/profile/:id" component={Profile} />
+
+        {/* Private routes will be accessible if isAuthenticated is true          */}
         <PrivateRoute exact path="/dashboard" component={Dashboard} />
         <PrivateRoute exact path="/create-profile" component={ProfileForm} />
         <PrivateRoute exact path="/edit-profile" component={ProfileForm} />
@@ -31,7 +33,7 @@ const Routes = props => {
         <PrivateRoute exact path="/posts" component={Posts} />
 
         <PrivateRoute exact path="/posts/:id" component={SinglePost} />
-        {/* link to this path by <PostItem/> in <Posts /> */}
+        {/* At the endpoint: /posts/:id,  {SinglePost} is use by <PostItem/> in <Posts /> */}
 
         <Route component={NotFound} />
       </Switch>
