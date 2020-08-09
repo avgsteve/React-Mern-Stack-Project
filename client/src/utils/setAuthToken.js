@@ -1,5 +1,7 @@
 import AxiosApi from './api';
 
+
+
 const setAuthToken = token => {
   if (token) {
     AxiosApi.defaults.headers.common['x-auth-token'] = token;
