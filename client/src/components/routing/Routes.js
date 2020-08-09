@@ -4,7 +4,7 @@ import Register from '../auth/Register';
 import Login from '../auth/Login';
 import Alert from '../layout/Alert';
 import Dashboard from '../dashboard/Dashboard';
-import ProfileForm from '../profile-forms/ProfileForm';
+import CreateProfileForm from '../profile-forms/CreateProfileForm';
 import AddExperience from '../profile-forms/AddExperience';
 import AddEducation from '../profile-forms/AddEducation';
 import Profiles from '../profiles/Profiles';
@@ -26,8 +26,8 @@ const Routes = props => {
 
         {/* Private routes will be accessible if isAuthenticated is true          */}
         <PrivateRoute exact path="/dashboard" component={Dashboard} />
-        <PrivateRoute exact path="/create-profile" component={ProfileForm} />
-        <PrivateRoute exact path="/edit-profile" component={ProfileForm} />
+        <PrivateRoute exact path="/create-profile" component={CreateProfileForm} />
+        <PrivateRoute exact path="/edit-profile" component={CreateProfileForm} />
         <PrivateRoute exact path="/add-experience" component={AddExperience} />
         <PrivateRoute exact path="/add-education" component={AddEducation} />
         <PrivateRoute exact path="/posts" component={Posts} />

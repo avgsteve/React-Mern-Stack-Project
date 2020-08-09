@@ -47,9 +47,14 @@ const Register = ({ action_setAlert, action_register, isAuthenticated }) => {
     if (name === "") action_setAlert('Please enter your name', 'danger');
     if (email === "") action_setAlert('Please enter your email', 'danger');
     if (password === "") action_setAlert('Please enter your password', 'danger');
-    if (password || (password !== password_confirm)) action_setAlert('Passwords do not match', 'danger');
+    if (password) {
+      if (password !== password_confirm) {
+        action_setAlert('Passwords do not match', 'danger');
+      } else {
+        action_register({ name, email, password });
+      }
+    }
 
-    action_register({ name, email, password });
 
     // //  ===== for testing ====
     // const newUserData = { name, email, password };
