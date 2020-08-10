@@ -17,7 +17,7 @@ const User = require('../../models/User');
 // @desc     Get current users profile
 // @access   Private
 
-router.get('/me', auth_tokenVerifier,
+router.get('/my_profile', auth_tokenVerifier,
   async (req, res) => {
 
     try {
@@ -584,6 +584,7 @@ router.delete('/education/:edu_id', auth_tokenVerifier,
 // @desc     Get user repos from Github
 // @access   Public
 router.get('/github/:username', async (req, res) => {
+
   try {
 
     // === Use Axios to send GET request to GitHub from Node.js backend
@@ -597,40 +598,33 @@ router.get('/github/:username', async (req, res) => {
       Authorization: `token ${config.get('githubToken')}`
     };
 
-
     // const githubResponse = await axios.get(uri, {
     //   headers
     // });
 
-    const githubResponse = await axios.get(uri, {
+    const userRepos_from_GithubAPI = await axios.get(uri, {
       headers
-    }).then(result => {
-
-      console.log("\nThe result of GET request to GitHub:\n");
-      console.log(result.data[0]);
-      console.log("\n====================================\n");
-
-      return res.json({
-        msg: "GET request to GitHub successed!",
-        data: result.data[0] // extra the first property (user's detail) from API 
-      });
-
-      // res.json(JSON.parse(body));
-
-    }).catch((err) => {
-
-      console.log("\nThere's an error in GET request to GitHub:\n");
-      console.log(err.response); // the response from github
-      console.log("\n====================================\n");
     });
 
-    // res
+    // DEBUG
+    // console.log("\nThe result of GET request to GitHub:\n");
+    // console.log(userRepos_from_GithubAPI.data);
+    // console.log("\n====================================\n");
+
+    // res.json(JSON.parse(body));
+
     return res.status(200).json(
       {
-        user_github_profile: githubResponse.data // githubResponse.data is the full detail from Github API
+        message: "User's github repos data has found! Please use the object name 'user_repos' to get the Array of repos data.",
+        user_repos: userRepos_from_GithubAPI.data // githubResponse.data is the full detail from Github API
       });
 
   } catch (err) {
+
+    console.log("\nThere's an error in GET request to GitHub:\n");
+    console.log(err.response); // the response from github
+    console.log("\n====================================\n");
+
     console.error(err.message);
     return res.status(404).json({
       msg: 'No Github profile found'

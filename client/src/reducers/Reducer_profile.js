@@ -12,7 +12,7 @@ import {
 const initialState = {
   user_profile: null,
   profiles: [],
-  repos: [],
+  user_repos: [],
   loading: true,
   error: {}
 };
@@ -47,27 +47,27 @@ export default function (state = initialState, action) {
         ...state,
         error: payload,
         loading: false,
-        profile: null // reset profile
+        user_profile: null // reset profile
       };
 
     case CLEAR_PROFILE:
       return {
         ...state,
-        profile: null,
-        repos: []
+        user_profile: null,
+        user_repos: []
       };
 
     case GET_REPOS:
       return {
         ...state,
-        repos: payload,
+        user_repos: payload,
         loading: false
       };
 
     case NO_REPOS:
       return {
         ...state,
-        repos: []
+        user_repos: []
       };
     default:
       return state;

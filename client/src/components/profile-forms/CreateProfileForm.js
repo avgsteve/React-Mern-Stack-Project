@@ -21,7 +21,7 @@ const initialState = {
 
 const ProfileForm = ({
 
-  profile_state_in_Redux: { profile, loading },
+  profile_state_in_Redux: { user_profile, loading },
   action_createProfile,
   action_getUserProfile,
   history
@@ -35,20 +35,20 @@ const ProfileForm = ({
   useEffect(() => {
 
     // If user's profile exists aleady, get and read the profile to local state
-    if (!profile) action_getUserProfile();
+    if (!user_profile) action_getUserProfile();
 
 
-    if (!loading && profile) {
+    if (!loading && user_profile) {
 
       const currentProfileData = { ...initialState };
 
 
-      for (const key in profile) {
-        if (key in currentProfileData) currentProfileData[key] = profile[key];
+      for (const key in user_profile) {
+        if (key in currentProfileData) currentProfileData[key] = user_profile[key];
       }
 
-      for (const key in profile.social) {
-        if (key in currentProfileData) currentProfileData[key] = profile.social[key];
+      for (const key in user_profile.social) {
+        if (key in currentProfileData) currentProfileData[key] = user_profile.social[key];
       }
       if (Array.isArray(currentProfileData.skills))
         currentProfileData.skills = currentProfileData.skills.join(', ');
@@ -56,7 +56,7 @@ const ProfileForm = ({
       set_local_form_data(currentProfileData);
     }
 
-  }, [loading, action_getUserProfile, profile]);
+  }, [loading, action_getUserProfile, user_profile]);
 
   const {
     company,
@@ -78,7 +78,7 @@ const ProfileForm = ({
 
   const onSubmit = e => {
     e.preventDefault();
-    action_createProfile(local_form_Data, history, profile ? true : false);
+    action_createProfile(local_form_Data, history, user_profile ? true : false);
   };
 
   return (

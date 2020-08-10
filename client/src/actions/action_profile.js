@@ -19,7 +19,7 @@ export const action_getUserProfile = () => async dispatch => {
 
   try {
 
-    const res = await AxiosApi.get('/profile/me');
+    const res = await AxiosApi.get('/profile/my_profile');
 
     dispatch({
       type: GET_PROFILE,
@@ -86,14 +86,20 @@ export const getProfileById = userId => async dispatch => {
 };
 
 // Get Github repos
-export const getGithubRepos = username => async dispatch => {
+export const action_getGithubRepos = username => async dispatch => {
+
+  //#### DEBUG
+  console.log('\n\nLog of action_getGithubRepos:');
+
   try {
     const res = await AxiosApi.get(`/profile/github/${username}`);
 
+    //#### DEBUG
+    console.log('\nLog of getGithubRepos for res:', res.data.user_repos);
 
     dispatch({
       type: GET_REPOS,
-      payload: res.data
+      payload: res.data.user_repos
     });
 
 
