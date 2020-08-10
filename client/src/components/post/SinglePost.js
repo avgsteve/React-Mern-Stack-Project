@@ -15,13 +15,19 @@ import { getPostById } from '../../actions/post';
 const SinglePost = ({
   getPostById,
   current_post,
+  post_state_in_Redux,
   post_loading_status,
   match }) => {
 
 
   useEffect(() => {
     getPostById(match.params.id);
-  }, [getPostById, match.params.id]);
+
+  }, [
+    getPostById,
+    match.params.id,
+    post_state_in_Redux
+  ]);
 
   console.log(`current_post in SinglePost.js: `, current_post);
 
@@ -59,6 +65,7 @@ SinglePost.propTypes = {
 
 const mapStateToProps = (state) => ({
   current_post: state.post.single_post_for_edit,
+  post_state_in_Redux: state.post.post,
   post_loading_status: state.post.loading
 });
 
