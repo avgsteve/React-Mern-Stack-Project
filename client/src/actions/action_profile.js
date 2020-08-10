@@ -66,9 +66,13 @@ export const getProfileById = userId => async dispatch => {
   try {
     const res = await AxiosApi.get(`/profile/user/${userId}`);
 
+    console.log("In getProfileById:", res.data.user_profile_by_id);
+
     dispatch({
+
       type: GET_PROFILE,
-      payload: res.data.profile
+      payload: res.data.user_profile_by_id
+
     });
   } catch (err) {
     dispatch({

@@ -13,7 +13,7 @@ import { getProfileById } from '../../actions/action_profile';
 const Profile = ({
 
   getProfileById,
-  profile: { profile },
+  profile_state_in_Redux: { user_profile },
   auth,
   match }) => {
 
@@ -24,7 +24,7 @@ const Profile = ({
 
   return (
     <Fragment>
-      {profile === null ? (
+      {user_profile === null ? (
         <Spinner />
       ) : (
           <Fragment>
@@ -33,19 +33,19 @@ const Profile = ({
           </Link>
             {auth.isAuthenticated &&
               auth.loading === false &&
-              auth.user._id === profile.user._id && (
+              auth.user._id === user_profile._id && (
                 <Link to="/edit-profile" className="btn btn-dark">
                   Edit Profile
                 </Link>
               )}
             <div className="profile-grid my-1">
-              <ProfileTop profile={profile} />
-              <ProfileAbout profile={profile} />
+              <ProfileTop profile={user_profile} />
+              <ProfileAbout profile={user_profile} />
               <div className="profile-exp bg-white p-2">
                 <h2 className="text-primary">Experience</h2>
-                {profile.experience.length > 0 ? (
+                {user_profile.experience.length > 0 ? (
                   <Fragment>
-                    {profile.experience.map((experience) => (
+                    {user_profile.experience.map((experience) => (
                       <ProfileExperience
                         key={experience._id}
                         experience={experience}
@@ -59,9 +59,9 @@ const Profile = ({
 
               <div className="profile-edu bg-white p-2">
                 <h2 className="text-primary">Education</h2>
-                {profile.education.length > 0 ? (
+                {user_profile.education.length > 0 ? (
                   <Fragment>
-                    {profile.education.map((education) => (
+                    {user_profile.education.map((education) => (
                       <ProfileEducation
                         key={education._id}
                         education={education}
@@ -73,8 +73,8 @@ const Profile = ({
                   )}
               </div>
 
-              {profile.githubusername && (
-                <ProfileGithub username={profile.githubusername} />
+              {user_profile.githubusername && (
+                <ProfileGithub username={user_profile.githubusername} />
               )}
             </div>
           </Fragment>
@@ -85,12 +85,12 @@ const Profile = ({
 
 Profile.propTypes = {
   getProfileById: PropTypes.func.isRequired,
-  profile: PropTypes.object.isRequired,
+  profile_state_in_Redux: PropTypes.object.isRequired,
   auth: PropTypes.object.isRequired
 };
 
 const mapStateToProps = (state) => ({
-  profile: state.profile,
+  profile_state_in_Redux: state.profile,
   auth: state.auth
 });
 

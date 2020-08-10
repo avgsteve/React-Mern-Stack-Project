@@ -16,7 +16,7 @@ const Dashboard = ({
   action_getUserProfile,
   action_deleteAccount,
   auth_state_in_Redux: { user },
-  profile_state_in_Redux: { profile },
+  profile_state_in_Redux: { user_profile },
   loading_profile
 
 }) => {
@@ -40,12 +40,12 @@ const Dashboard = ({
         loading_profile === true ? <Spinner /> :
 
           // If user's profile exsits, show the profile Components, otherwise show text
-          profile !== null ? (
+          user_profile !== null ? (
 
             <Fragment>
               <DashboardActions />
-              <Experience experience={profile.experience} />
-              <Education education={profile.education} />
+              <Experience experience={user_profile.experience} />
+              <Education education={user_profile.education} />
 
               <div className="my-2">
                 <button className="btn btn-danger" onClick={() => action_deleteAccount()}>
@@ -79,7 +79,7 @@ Dashboard.propTypes = {
 const mapStateToProps = (state) => ({
   auth_state_in_Redux: state.auth,
   profile_state_in_Redux: state.profile,
-  loading_profile: state.profile.loading
+  loading_profile: state.profile.loading,
 });
 
 export default connect(mapStateToProps, { action_getUserProfile, action_deleteAccount })(

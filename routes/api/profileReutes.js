@@ -46,6 +46,97 @@ router.get('/me', auth_tokenVerifier,
   });
 
 
+// @route    GET api/profile/user/:user_id
+// @desc     Get profile by user ID
+// @access   Public
+router.get('/user/:user_id',
+  async (
+    //  { params: {
+    //     user_id
+    //   }
+    // },
+    req,
+    res) => {
+
+    try {
+      console.log(`The params id is: ${req.params.user_id}\n\n`);
+
+      const profile = await Profile.findOne({
+        // user: user_id
+        user: req.params.user_id,
+
+      }).populate('user', ['name', 'avatar']);
+
+      if (!profile) return res.status(400).json({
+        msg: 'Profile not found'
+      });
+
+      return res.json({
+        message: "Query for user by ID is successful",
+        user_profile_by_id: profile
+      });
+
+
+    } catch (err) {
+
+      console.error(err.message);
+
+      if (err.kind == 'ObjectId') {
+        return res.status(400).json({
+          msg: 'Profile not found'
+        });
+      }
+
+      return res.status(500).json({
+        msg: 'Server error'
+      });
+    }
+  });
+
+// @route    DELETE api/profile
+// @desc     Delete profile, user & posts
+// @access   Private
+// Used by front-end:  getProfileById in action_profile.js
+
+router.delete('/', auth_tokenVerifier, async (req, res) => {
+
+  try {
+    // // Remove user posts
+    // await Post.deleteMany({
+    //   user: req.user.id
+    // });
+    // Remove profile
+    const deleteResultOfProfile = await Profile.findOneAndRemove({
+      user: req.user.id //find Profile data in user's field
+    });
+    // Remove user
+    const deleteResultOfUser = await User.findOneAndRemove({
+      _id: req.user.id
+    }).select('-password');
+
+    console.log("\n\ndeleteResultOfProfile", deleteResultOfProfile);
+    console.log("\n\ndeleteResultOfUser", deleteResultOfUser);
+
+    let deleteMessage;
+    if (!deleteResultOfUser && !deleteResultOfProfile) {
+      deleteMessage = 'User deleted';
+    }
+
+
+    res.json({
+      msg: deleteMessage,
+      deleteResultOf_Profile: deleteResultOfProfile,
+      deleteResultOf_User: deleteResultOfUser
+    });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
+
+
+
+
 // @route    POST api/profile
 // @desc     Create or update user profile
 // @access   Private
@@ -212,90 +303,6 @@ router.get('/', async (req, res) => {
 });
 
 
-
-// @route    GET api/profile/user/:user_id
-// @desc     Get profile by user ID
-// @access   Public
-router.get('/user/:user_id',
-  async (
-    //  { params: {
-    //     user_id
-    //   }
-    // },
-    req,
-    res) => {
-
-    try {
-      console.log(`The params id is: ${req.params.user_id}\n\n`);
-
-      const profile = await Profile.findOne({
-        // user: user_id
-        user: req.params.user_id,
-
-      }).populate('user', ['name', 'avatar']);
-
-      if (!profile) return res.status(400).json({
-        msg: 'Profile not found'
-      });
-
-      return res.json(profile);
-
-
-    } catch (err) {
-
-      console.error(err.message);
-
-      if (err.kind == 'ObjectId') {
-        return res.status(400).json({
-          msg: 'Profile not found'
-        });
-      }
-
-      return res.status(500).json({
-        msg: 'Server error'
-      });
-    }
-  });
-
-// @route    DELETE api/profile
-// @desc     Delete profile, user & posts
-// @access   Private
-
-router.delete('/', auth_tokenVerifier, async (req, res) => {
-
-  try {
-    // // Remove user posts
-    // await Post.deleteMany({
-    //   user: req.user.id
-    // });
-    // Remove profile
-    const deleteResultOfProfile = await Profile.findOneAndRemove({
-      user: req.user.id //find Profile data in user's field
-    });
-    // Remove user
-    const deleteResultOfUser = await User.findOneAndRemove({
-      _id: req.user.id
-    }).select('-password');
-
-    console.log("\n\ndeleteResultOfProfile", deleteResultOfProfile);
-    console.log("\n\ndeleteResultOfUser", deleteResultOfUser);
-
-    let deleteMessage;
-    if (!deleteResultOfUser && !deleteResultOfProfile) {
-      deleteMessage = 'User deleted';
-    }
-
-
-    res.json({
-      msg: deleteMessage,
-      deleteResultOf_Profile: deleteResultOfProfile,
-      deleteResultOf_User: deleteResultOfUser
-    });
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server Error');
-  }
-});
 
 // @route    PUT api/profile/experience
 // @desc     Add experience field (Array) inside user's profile

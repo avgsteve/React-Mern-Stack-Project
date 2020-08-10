@@ -10,7 +10,7 @@ import {
 
 // ---- Inititial states ----
 const initialState = {
-  profile: null,
+  user_profile: null,
   profiles: [],
   repos: [],
   loading: true,
@@ -30,7 +30,7 @@ export default function (state = initialState, action) {
     case UPDATE_PROFILE:
       return {
         ...state,
-        profile: payload,
+        user_profile: payload,
         loading: false
       };
 
