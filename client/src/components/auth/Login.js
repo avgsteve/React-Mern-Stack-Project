@@ -3,8 +3,14 @@ import { Link, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { action_login } from '../../actions/auth';
+// import { action_setAlert } from '../../actions/action_alert';
 
-const Login = ({ action_login, isAuthenticated }) => {
+
+const Login = ({
+  action_login,
+  isAuthenticated,
+  // action_setAlert 
+}) => {
 
   // Set & change the value of email & password
   const [data_in_form, set_data_in_Form] = useState({

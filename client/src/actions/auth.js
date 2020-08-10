@@ -79,9 +79,13 @@ export const action_login = (email, password) => async dispatch => {
 
   const body = { email, password };
 
+  console.log("action_login started");
+
   // If login is successful, get user's info
   try {
     const res = await AxiosApi.post('/auth', body);
+
+    console.log("action_login has got response from backend server");
 
     dispatch({
       type: LOGIN_SUCCESS,
@@ -94,6 +98,9 @@ export const action_login = (email, password) => async dispatch => {
     // If login is failed, get user's info, set alert & clear user's token
   } catch (err) {
     const errors = err.response.data.errors;
+
+    console.log("\n\naction_login has got error from backend server: ", err);
+
 
     if (errors) {
       errors.forEach(error => dispatch(action_setAlert(error.msg, 'danger')));

@@ -93,9 +93,11 @@ const ProfileForm = ({
 
       <small>* = required field</small>
 
+
       <form className="form" onSubmit={onSubmit}>
 
-        {/* ==== Option for Professional Status ==== */}
+        {/* ==== LIST of OPTIONS for Professional Status ==== */}
+
         <div className="form-group">
 
           <select name="status" value={status} onChange={onChange}>
@@ -116,6 +118,7 @@ const ProfileForm = ({
 
         </div>
 
+        {/* ==== INPUT FIELDS FOR PERSONAL INFO ==== */}
 
         <div className="form-group">
 
@@ -195,12 +198,14 @@ const ProfileForm = ({
           <small className="form-text">Tell us a little about yourself</small>
         </div>
 
+
+        {/* ==== Button & Input for SOCIAL NETWORK LINKS ==== */}
+
         <div className="my-2">
           <button
             onClick={() => toggleSocialInputs(!displaySocialInputs)}
             type="button"
-            className="btn btn-light"
-          >
+            className="btn btn-light">
             Add Social Network Links
           </button>
           <span>Optional</span>
@@ -209,6 +214,7 @@ const ProfileForm = ({
 
         {
           displaySocialInputs && (
+
             <Fragment>
 
               <div className="form-group social-input">
@@ -267,8 +273,12 @@ const ProfileForm = ({
               </div>
 
             </Fragment>
+
           )
         }
+
+
+        {/* ==== Button & Input for SUBMIT & GO BACK ==== */}
 
         <input type="submit" className="btn btn-primary my-1" />
 
@@ -281,6 +291,8 @@ const ProfileForm = ({
   );
 };
 
+
+
 ProfileForm.propTypes = {
   action_createProfile: PropTypes.func.isRequired,
   action_getUserProfile: PropTypes.func.isRequired,
@@ -290,6 +302,7 @@ ProfileForm.propTypes = {
 const mapStateToProps = state => ({
   profile_state_in_Redux: state.profile
 });
+
 
 export default connect(mapStateToProps, { action_createProfile, action_getUserProfile })(
   ProfileForm
