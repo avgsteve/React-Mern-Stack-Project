@@ -112,19 +112,22 @@ export const action_getGithubRepos = username => async dispatch => {
 
 // Create or update profile
 export const action_createProfile = (
-  formData,
+  data_from_CreateProfileForm,
   history,
   edit = false
 ) => async dispatch => {
 
+  console.log("\naction_createProfile is called!\n");
 
   try {
-    const res = await AxiosApi.post('/profile', formData);
+    const res = await AxiosApi.post('/profile', data_from_CreateProfileForm);
+
+    console.log("\nThe result of action_createProfile:\n", res);
+
 
     dispatch({
       type: GET_PROFILE,
       payload: res.data.updated_profile
-
     });
 
     dispatch(action_setAlert(edit ? 'Profile Updated' : 'Profile Created', 'success'));
@@ -149,6 +152,51 @@ export const action_createProfile = (
   }
 };
 
+
+// Create or update profile
+export const action_udpateProfile = (
+  updated_formData,
+  history,
+  edit = true
+) => async dispatch => {
+
+  console.log("\naction_createProfile is called!\n");
+
+  try {
+    const res = await AxiosApi.post('/profile', updated_formData);
+
+    console.log("\nThe result of action_createProfile:\n", res);
+
+
+    dispatch({
+      type: GET_PROFILE,
+      payload: res.data.updated_profile
+    });
+
+    dispatch(
+      action_setAlert('Profile Updated', 'success')
+    );
+
+    if (edit) {
+      history.push('/dashboard');
+    }
+
+  } catch (err) {
+    const errors = err.response.data.errors;
+
+    if (errors) {
+      errors.forEach(error => dispatch(action_setAlert(error.msg, 'danger')));
+    }
+
+    dispatch({
+      type: PROFILE_ERROR,
+      payload: {
+        msg: err.response.statusText,
+        status: err.response.status
+      }
+    });
+  }
+};
 
 
 // Add Experience

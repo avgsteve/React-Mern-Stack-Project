@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { action_createProfile, action_getUserProfile } from '../../actions/action_profile';
 
-const initialState = {
+const initialState_for_form_data = {
   company: '',
   website: '',
   location: '',
@@ -28,35 +28,52 @@ const ProfileForm = ({
 
 }) => {
 
-  const [local_form_Data, set_local_form_data] = useState(initialState);
+  const [
+    local_formData, // objects for this Component to store value of different input fields
+    update_local_formData
+  ] = useState(initialState_for_form_data);
 
-  const [displaySocialInputs, toggleSocialInputs] = useState(false);
+  const [
+    displaySocialInputs, // Use this to show/hide the optional input field for social
+    toggleSocialInputs
+  ] = useState(false);
 
+
+  // When mounting component, check Redux store for profile to decide whether to overwrite the form data with profile data if there's any
   useEffect(() => {
 
-    // If user's profile exists aleady, get and read the profile to local state
+    // get (current) user's profile
     if (!user_profile) action_getUserProfile();
 
-
+    // when loading is finished and user's profile has been fetched
     if (!loading && user_profile) {
 
-      const currentProfileData = { ...initialState };
-
+      // destructure the properties and keys from "initialState_for_form_data" and save them to 
+      const currentProfileData = { ...initialState_for_form_data };
 
       for (const key in user_profile) {
-        if (key in currentProfileData) currentProfileData[key] = user_profile[key];
+        if (key in currentProfileData)
+          currentProfileData[key] = user_profile[key];
       }
 
       for (const key in user_profile.social) {
-        if (key in currentProfileData) currentProfileData[key] = user_profile.social[key];
+        if (key in currentProfileData)
+          currentProfileData[key] = user_profile.social[key];
       }
+
       if (Array.isArray(currentProfileData.skills))
         currentProfileData.skills = currentProfileData.skills.join(', ');
 
-      set_local_form_data(currentProfileData);
+      update_local_formData(currentProfileData);
     }
 
-  }, [loading, action_getUserProfile, user_profile]);
+  }, [
+    // trigger useEffect again if any of below props from Redux store has changed
+    loading,
+    user_profile,
+    action_getUserProfile
+  ]);
+
 
   const {
     company,
@@ -71,14 +88,26 @@ const ProfileForm = ({
     linkedin,
     youtube,
     instagram
-  } = local_form_Data;
+  } = local_formData; // from useState(initialState_for_form_data); 
 
+
+  // Dynamically update all properties in obj "local_formData"
   const onChange = e =>
-    set_local_form_data({ ...local_form_Data, [e.target.name]: e.target.value });
+    update_local_formData(
+      {
+        // #1: Use all current properties from obj "local_formData"
+        ...local_formData,
+        // #2 and this dynamically updated property-value obj 
+        [e.target.name]: e.target.value
+        // to create a new obj to be used in function "update_local_formData()"
+      }
+    );
 
   const onSubmit = e => {
     e.preventDefault();
-    action_createProfile(local_form_Data, history, user_profile ? true : false);
+
+    // will send POST req to backend to update data and next step will be only using action_createProfile to update the data in current Redux store but not using any action to update Redux
+    action_createProfile(local_formData, history, user_profile ? true : false);
   };
 
   return (
@@ -211,10 +240,10 @@ const ProfileForm = ({
           <span>Optional</span>
         </div>
 
-
         {
-          displaySocialInputs && (
-
+          displaySocialInputs &&
+          // === optional input fields for social network === */
+          (
             <Fragment>
 
               <div className="form-group social-input">
@@ -287,7 +316,7 @@ const ProfileForm = ({
         </Link>
 
       </form>
-    </Fragment>
+    </Fragment >
   );
 };
 
