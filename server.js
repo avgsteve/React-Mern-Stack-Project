@@ -1,36 +1,39 @@
 /*jshint esversion: 6 */
 /*jshint esversion: 8 */
-const express = require( 'express' );
-const connectDB = require( './config/db' ); // use mongoose to connect to database
+const express = require('express');
+const connectDB = require('./config/connectToDB'); // use mongoose to connect to database
 // const path = require( 'path' );
 
 const app = express();
 
-connectDB(); // Connect Database
+try {
+  connectDB(); // Connect Database
+
+} catch (error) {
+  console.log("There's an error when establishing connection to MongoDB:", error);
+}
 
 
 // Init Middleware
-app.use( express.json() ); // for parsing incoming requests with JSON payloads
+app.use(express.json()); // for parsing incoming requests with JSON payloads
 //No need to use app.use(express.json( { extended: false } ));
 //ref:  https://stackoverflow.com/questions/57762864/meaning-of-argument-in-express-json-extended-false
 
 //for testing res data in POSTMAN
-app.get( '/', ( req, res ) => res.send( "API running!" ) );
+app.get('/', (req, res) => res.send("API running!"));
 
 // Define Routes
 
-app.use( '/api/users', require( './routes/api/users' ) );
+app.use('/api/users', require('./routes/api/users'));
 
-app.use( '/api/auth', require( './routes/api/authRoutes' ) );
+app.use('/api/auth', require('./routes/api/authRoutes'));
 // GET@/api/auth for user login,
 // POST@/api/auth for getting user'd data from document
 
-app.use( '/api/profile', require( './routes/api/profileReutes' ) );
+app.use('/api/profile', require('./routes/api/profileReutes'));
 // GET@/api/profile/me for user's profile
 
-app.use( '/api/posts', require( './routes/api/postsReutes' ) );
-
-
+app.use('/api/posts', require('./routes/api/postsReutes'));
 
 // // Serve static assets in production
 // if (process.env.NODE_ENV === 'production') {
@@ -44,4 +47,4 @@ app.use( '/api/posts', require( './routes/api/postsReutes' ) );
 
 const PORT = process.env.PORT || 5000;
 
-app.listen( PORT, () => console.log( `Server started on port ${PORT}` ) );
+app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
