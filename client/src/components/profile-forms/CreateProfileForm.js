@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { action_createProfile, action_getUserProfile } from '../../actions/action_profile';
@@ -24,8 +24,7 @@ const ProfileForm = ({
   profile_state_in_Redux: { user_profile, loading },
   action_createProfile,
   action_getUserProfile,
-  history
-
+  history // from withRouter
 }) => {
 
   const [
@@ -334,5 +333,5 @@ const mapStateToProps = state => ({
 
 
 export default connect(mapStateToProps, { action_createProfile, action_getUserProfile })(
-  ProfileForm
+  withRouter(ProfileForm) //use withRouter from react-router-dom to pass in "history" as prop
 );

@@ -30,19 +30,22 @@ const AddEducation = ({ addEducation, history }) => {
 
   return (
     <Fragment>
+
       <h1 className="large text-primary">Add Your Education</h1>
       <p className="lead">
         <i className="fas fa-code-branch" /> Add any school or bootcamp that you
         have attended
       </p>
       <small>* = required field</small>
-      <form
-        className="form"
-        onSubmit={e => {
+
+
+      <form className="form" onSubmit={
+        e => {
           e.preventDefault();
           addEducation(formData, history);
-        }}
-      >
+        }
+      } >
+
         <div className="form-group">
           <input
             type="text"
@@ -53,6 +56,7 @@ const AddEducation = ({ addEducation, history }) => {
             required
           />
         </div>
+
         <div className="form-group">
           <input
             type="text"
@@ -63,6 +67,7 @@ const AddEducation = ({ addEducation, history }) => {
             required
           />
         </div>
+
         <div className="form-group">
           <input
             type="text"
@@ -72,10 +77,12 @@ const AddEducation = ({ addEducation, history }) => {
             onChange={onChange}
           />
         </div>
+
         <div className="form-group">
           <h4>From Date</h4>
           <input type="date" name="from" value={from} onChange={onChange} />
         </div>
+
         <div className="form-group">
           <p>
             <input
@@ -83,11 +90,14 @@ const AddEducation = ({ addEducation, history }) => {
               name="current"
               checked={current}
               value={current}
-              onChange={() => setFormData({ ...formData, current: !current })}
+              onChange={
+                () => setFormData({ ...formData, current: !current })
+              }
             />{' '}
             Current School
           </p>
         </div>
+
         <div className="form-group">
           <h4>To Date</h4>
           <input
@@ -98,6 +108,7 @@ const AddEducation = ({ addEducation, history }) => {
             disabled={current}
           />
         </div>
+
         <div className="form-group">
           <textarea
             name="description"
@@ -108,10 +119,12 @@ const AddEducation = ({ addEducation, history }) => {
             onChange={onChange}
           />
         </div>
+
         <input type="submit" className="btn btn-primary my-1" />
         <Link className="btn btn-light my-1" to="/dashboard">
           Go Back
         </Link>
+
       </form>
     </Fragment>
   );

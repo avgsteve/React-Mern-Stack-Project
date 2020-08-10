@@ -43,15 +43,19 @@ const Dashboard = ({
           user_profile !== null ? (
 
             <Fragment>
+
               <DashboardActions />
               <Experience experience={user_profile.experience} />
               <Education education={user_profile.education} />
 
-              <div className="my-2">
+              <div className="my-2"> {/* margin: 2rem 0; */}
+
                 <button className="btn btn-danger" onClick={() => action_deleteAccount()}>
                   <i className="fas fa-user-minus" /> Delete My Account
             </button>
+
               </div>
+
             </Fragment>
 
           ) : (

@@ -20,7 +20,7 @@ const morganMiddleware = morgan(function (tokens, req, res) {
     // chalk.yellow(tokens['remote-addr'](req, res)),
     chalk.hex('#fffa65').bold('from ' + tokens.referrer(req, res)),
     // chalk.hex('#1e90ff')(tokens['user-agent'](req, res)),
-    '\n',
+    '',
   ].join(' ');
   //ref:  https://stackoverflow.com/questions/36284015/morgan-node-js-coloring-status-code-as-in-dev-while-using-custom-format
   //ref: Color not displayed: https://github.com/expressjs/morgan/issues/186

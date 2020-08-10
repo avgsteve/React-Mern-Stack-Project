@@ -112,9 +112,11 @@ export const action_getGithubRepos = username => async dispatch => {
 
 // Create or update profile
 export const action_createProfile = (
+
   data_from_CreateProfileForm,
   history,
   edit = false
+
 ) => async dispatch => {
 
   console.log("\naction_createProfile is called!\n");
@@ -122,17 +124,19 @@ export const action_createProfile = (
   try {
     const res = await AxiosApi.post('/profile', data_from_CreateProfileForm);
 
-    console.log("\nThe result of action_createProfile:\n", res);
-
+    // console.log("\nThe result of action_createProfile:\n", res);
 
     dispatch({
       type: GET_PROFILE,
       payload: res.data.updated_profile
     });
 
-    dispatch(action_setAlert(edit ? 'Profile Updated' : 'Profile Created', 'success'));
+    // DISPLAY ALERT MESSAGE
+    dispatch(
+      action_setAlert(edit ? 'Profile Updated' : 'Profile Created', 'success')
+    );
 
-    if (!edit) {
+    if (!edit) { // after creating new profile, redirect  to dashboard
       history.push('/dashboard');
     }
   } catch (err) {

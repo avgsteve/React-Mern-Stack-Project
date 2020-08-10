@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { addExperience } from '../../actions/action_profile';
 
 const AddExperience = ({ addExperience, history }) => {
+
   const [formData, setFormData] = useState({
     company: '',
     title: '',
@@ -13,6 +14,7 @@ const AddExperience = ({ addExperience, history }) => {
     to: '',
     current: false,
     description: ''
+
   });
 
   const { company, title, location, from, to, current, description } = formData;
@@ -22,19 +24,22 @@ const AddExperience = ({ addExperience, history }) => {
 
   return (
     <Fragment>
+
       <h1 className="large text-primary">Add An Experience</h1>
       <p className="lead">
         <i className="fas fa-code-branch" /> Add any developer/programming
         positions that you have had in the past
       </p>
       <small>* = required field</small>
+
       <form
         className="form"
         onSubmit={e => {
           e.preventDefault();
           addExperience(formData, history);
-        }}
-      >
+        }
+        }>
+
         <div className="form-group">
           <input
             type="text"
@@ -45,6 +50,7 @@ const AddExperience = ({ addExperience, history }) => {
             required
           />
         </div>
+
         <div className="form-group">
           <input
             type="text"
@@ -52,22 +58,24 @@ const AddExperience = ({ addExperience, history }) => {
             name="company"
             value={company}
             onChange={onChange}
-            required
-          />
+            required />
         </div>
+
         <div className="form-group">
           <input
             type="text"
             placeholder="Location"
             name="location"
             value={location}
-            onChange={onChange}
-          />
+            onChange={onChange} />
         </div>
+
+
         <div className="form-group">
           <h4>From Date</h4>
           <input type="date" name="from" value={from} onChange={onChange} />
         </div>
+
         <div className="form-group">
           <p>
             <input
@@ -82,6 +90,7 @@ const AddExperience = ({ addExperience, history }) => {
             Current Job
           </p>
         </div>
+
         <div className="form-group">
           <h4>To Date</h4>
           <input
@@ -92,6 +101,7 @@ const AddExperience = ({ addExperience, history }) => {
             disabled={current}
           />
         </div>
+
         <div className="form-group">
           <textarea
             name="description"
@@ -102,10 +112,12 @@ const AddExperience = ({ addExperience, history }) => {
             onChange={onChange}
           />
         </div>
+
         <input type="submit" className="btn btn-primary my-1" />
         <Link className="btn btn-light my-1" to="/dashboard">
           Go Back
         </Link>
+
       </form>
     </Fragment>
   );
