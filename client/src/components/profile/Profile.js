@@ -13,7 +13,7 @@ import { getProfileById } from '../../actions/action_profile';
 const Profile = ({
 
   getProfileById,
-  profile_state_in_Redux: { user_profile },
+  profile_state_in_Redux: { user_profile, loading },
   auth,
   match }) => {
 
@@ -27,27 +27,40 @@ const Profile = ({
     <Fragment>
 
       {/* Before loading is completed */}
-      {user_profile === null ? (
-        <Spinner />
-      ) : (
 
-          <Fragment>
+      {loading === true ? (
 
-            <Link to="/profiles" className="btn btn-light">
-              Back To Profiles
-          </Link>
+        <Fragment>
+          <Spinner />
+          <h4 className="text-center">
+            Loading ...</h4>
+        </Fragment>
 
-            {/* Allow logged-in user to modify his own profile */}
-            {auth.isAuthenticated &&
-              auth.loading === false &&
-              auth.user._id === user_profile._id && (
-                <Link to="/edit-profile" className="btn btn-dark">
-                  Edit Profile
-                </Link>
-              )}
+      ) :
+
+        user_profile === null ? (
+
+          <h3 className="text-center">
+            Can't find any user's profile with this Id</h3>
+
+        ) : (
+
+            <Fragment>
+
+              <Link to="/profiles" className="btn btn-light">
+                Back To Profiles </Link>
+
+              {/* Allow logged-in user to modify his own profile */}
+              {auth.isAuthenticated &&
+                auth.loading === false &&
+                auth.user._id === user_profile._id && (
+                  <Link to="/edit-profile" className="btn btn-dark">
+                    Edit Profile
+                  </Link>
+                )}
 
 
-            {/* CSS style:
+              {/* CSS style:
               .profile-grid {
                   display: grid;
                   grid-template-areas:
@@ -57,61 +70,62 @@ const Profile = ({
                     'github github';
                   grid-gap: 1rem;       }     */}
 
-            <div className="profile-grid my-1">
+              <div className="profile-grid my-1">
 
-              <ProfileTop profile={user_profile} />
-              <ProfileAbout profile={user_profile} />
+                <ProfileTop profile={user_profile} />
+                <ProfileAbout profile={user_profile} />
 
-              {/* Experience (iterate current experience Array) */}
+                {/* Experience (iterate current experience Array) */}
 
-              <div className="profile-exp bg-white p-2">
-                <h2 className="text-primary">Experience</h2>
+                <div className="profile-exp bg-white p-2">
+                  <h2 className="text-primary">Experience</h2>
 
-                {user_profile.experience.length > 0 ? (
+                  {user_profile.experience.length > 0 ? (
 
-                  <Fragment>
-                    {user_profile.experience.map((experience) => (
-                      <ProfileExperience
-                        key={experience._id}
-                        experience={experience}
-                      />
-                    ))}
-                  </Fragment>
+                    <Fragment>
+                      {user_profile.experience.map((experience) => (
+                        <ProfileExperience
+                          key={experience._id}
+                          experience={experience}
+                        />
+                      ))}
+                    </Fragment>
 
-                ) : (
-                    <h4>No experience credentials</h4>
-                  )}
-              </div>
+                  ) : (
+                      <h4>No experience credentials</h4>
+                    )}
+                </div>
 
-              {/* Education (iterate current education Array) */}
+                {/* Education (iterate current education Array) */}
 
-              <div className="profile-edu bg-white p-2">
-                <h2 className="text-primary">Education</h2>
-                {user_profile.education.length > 0 ? (
-                  <Fragment>
-                    {user_profile.education.map((education) => (
-                      <ProfileEducation
-                        key={education._id}
-                        education={education}
-                      />
-                    ))}
-                  </Fragment>
-                ) : (
-                    <h4>No education credentials</h4>
-                  )}
-              </div>
+                <div className="profile-edu bg-white p-2">
+                  <h2 className="text-primary">Education</h2>
+                  {user_profile.education.length > 0 ? (
+                    <Fragment>
+                      {user_profile.education.map((education) => (
+                        <ProfileEducation
+                          key={education._id}
+                          education={education}
+                        />
+                      ))}
+                    </Fragment>
+                  ) : (
+                      <h4>No education credentials</h4>
+                    )}
+                </div>
 
-              {/* If user's github exists, use Component  <ProfileGithub /> 
+                {/* If user's github exists, use Component  <ProfileGithub /> 
               */}
 
-              {user_profile.githubusername && (
-                <ProfileGithub username={user_profile.githubusername} />
-              )}
+                {user_profile.githubusername && (
+                  <ProfileGithub username={user_profile.githubusername} />
+                )}
 
-            </div>
-          </Fragment>
-        )}
-    </Fragment>
+              </div>
+            </Fragment>
+          )}
+
+    </Fragment >
   );
 };
 

@@ -30,7 +30,7 @@ export const action_getUserProfile = () => async dispatch => {
     dispatch({
       type: PROFILE_ERROR,
       payload: {
-        msg: err.response.statusText,
+        message: err.response.statusText,
         status: err.response.status
       }
     });
@@ -54,7 +54,7 @@ export const action_getProfiles = () => async dispatch => {
     dispatch({
       type: PROFILE_ERROR,
       payload: {
-        msg: err.response.statusText,
+        message: err.response.statusText,
         status: err.response.status
       }
     });
@@ -81,7 +81,7 @@ export const getProfileById = userId => async dispatch => {
     dispatch({
       type: PROFILE_ERROR,
       payload: {
-        msg: err.response.statusText,
+        message: err.response.statusText,
         status: err.response.status
       }
     });
@@ -146,13 +146,13 @@ export const action_createProfile = (
     const errors = err.response.data.errors;
 
     if (errors) {
-      errors.forEach(error => dispatch(action_setAlert(error.msg, 'danger')));
+      errors.forEach(error => dispatch(action_setAlert(error.message, 'danger')));
     }
 
     dispatch({
       type: PROFILE_ERROR,
       payload: {
-        msg: err.response.statusText,
+        message: err.response.statusText,
         status: err.response.status
       }
     });
@@ -192,13 +192,13 @@ export const action_udpateProfile = (
     const errors = err.response.data.errors;
 
     if (errors) {
-      errors.forEach(error => dispatch(action_setAlert(error.msg, 'danger')));
+      errors.forEach(error => dispatch(action_setAlert(error.message, 'danger')));
     }
 
     dispatch({
       type: PROFILE_ERROR,
       payload: {
-        msg: err.response.statusText,
+        message: err.response.statusText,
         status: err.response.status
       }
     });
@@ -223,13 +223,13 @@ export const addExperience = (formData, history) => async dispatch => {
     const errors = err.response.data.errors;
 
     if (errors) {
-      errors.forEach(error => dispatch(action_setAlert(error.msg, 'danger')));
+      errors.forEach(error => dispatch(action_setAlert(error.message, 'danger')));
     }
 
     dispatch({
       type: PROFILE_ERROR,
       payload: {
-        msg: err.response.statusText,
+        message: err.response.statusText,
         status: err.response.status
       }
     });
@@ -255,13 +255,13 @@ export const addEducation = (formData, history) => async dispatch => {
     const errors = err.response.data.errors;
 
     if (errors) {
-      errors.forEach(error => dispatch(action_setAlert(error.msg, 'danger')));
+      errors.forEach(error => dispatch(action_setAlert(error.message, 'danger')));
     }
 
     dispatch({
       type: PROFILE_ERROR,
       payload: {
-        msg: err.response.statusText,
+        message: err.response.statusText,
         status: err.response.status
       }
     });
@@ -284,7 +284,7 @@ export const deleteExperience = id => async dispatch => {
     dispatch({
       type: PROFILE_ERROR,
       payload: {
-        msg: err.response.statusText,
+        message: err.response.statusText,
         status: err.response.status
       }
     });
@@ -311,7 +311,7 @@ export const deleteEducation = id => async dispatch => {
     dispatch({
       type: PROFILE_ERROR,
       payload: {
-        msg: err.response.statusText,
+        message: err.response.statusText,
         status: err.response.status
       }
     });
@@ -338,7 +338,7 @@ export const action_deleteAccount = () => async dispatch => {
       dispatch({
         type: PROFILE_ERROR,
         payload: {
-          msg: err.response.statusText,
+          message: err.response.statusText,
           status: err.response.status
         }
       });
