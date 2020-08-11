@@ -236,6 +236,29 @@ export const addExperience = (formData, history) => async dispatch => {
   }
 };
 
+// Delete experience
+export const deleteExperience = id => async dispatch => {
+  try {
+    const res = await AxiosApi.delete(`/profile/experience/${id}`);
+
+    // After sending DELETE REQ to Backend, API will send obj with property "updated_profile" which has updated user profile document
+    dispatch({
+      type: UPDATE_PROFILE,
+      payload: res.data.updated_profile
+    });
+
+    dispatch(action_setAlert('Experience Removed', 'success'));
+
+  } catch (err) {
+    dispatch({
+      type: PROFILE_ERROR,
+      payload: {
+        message: err.response.statusText,
+        status: err.response.status
+      }
+    });
+  }
+};
 
 
 // Add Education
@@ -268,28 +291,7 @@ export const addEducation = (formData, history) => async dispatch => {
   }
 };
 
-// Delete experience
-export const deleteExperience = id => async dispatch => {
-  try {
-    const res = await AxiosApi.delete(`/profile/experience/${id}`);
 
-    dispatch({
-      type: UPDATE_PROFILE,
-      payload: res.data.updated_profile
-    });
-
-    dispatch(action_setAlert('Experience Removed', 'success'));
-
-  } catch (err) {
-    dispatch({
-      type: PROFILE_ERROR,
-      payload: {
-        message: err.response.statusText,
-        status: err.response.status
-      }
-    });
-  }
-};
 
 
 // Delete education
